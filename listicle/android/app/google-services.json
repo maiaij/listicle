@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "373698527864",
+    "project_id": "listicle-bfe50",
+    "storage_bucket": "listicle-bfe50.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373698527864:android:f974c58b581b521fe8e38d",
+        "android_client_info": {
+          "package_name": "com.example.listicle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "373698527864-89ci2vjklgna68qseftchqlkbs5tdbt2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkg_Yu6qFTgm0ubEG_ZpBN-8XoRbG-E2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "373698527864-89ci2vjklgna68qseftchqlkbs5tdbt2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

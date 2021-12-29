@@ -17,7 +17,6 @@ class SelectedList extends StatefulWidget {
 class _SelectedListState extends State<SelectedList> with SingleTickerProviderStateMixin{
   late TabController controller;
   List<List<ListItem>> tabs = [];
-  bool edited = false;
 
   @override
   void initState() {
@@ -27,6 +26,188 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
       vsync: this
     );
   }
+
+  //ADD DATE MODIFIED
+  Widget itemsListView(List<ListItem> tabItems){
+    return ListView.separated(
+      separatorBuilder: (BuildContext context, int index) => const Divider(), 
+      itemCount: tabItems.length,
+      itemBuilder: (BuildContext context, int index){
+        return Container(
+          padding: const EdgeInsets.all(10.0),
+          child: ListTile(
+            title: Text(
+              tabItems[index].title,
+              style: const TextStyle(fontSize: 14, color: Colors.black),
+            ),
+
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+
+              children: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.horizontal_rule_rounded), 
+                  iconSize: 20,
+                  onPressed: (){
+                    if(tabItems[index].progress > 0){
+                      setState(() {
+                        tabItems[index].progress --;
+                      });
+                    }
+                  }
+                ),
+                
+                Text(
+                  '${tabItems[index].progress}'
+                ),
+
+                IconButton(
+                  icon: const Icon(Icons.add_rounded), 
+                  onPressed: (){
+                    setState(() {
+                      tabItems[index].progress ++;
+                    });
+                  }
+                ),
+
+              ],
+            ),
+
+            /**
+             * to add a border to the counter
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Color.fromARGB(255, 228, 228, 228)),
+                borderRadius: BorderRadius.circular(10),
+                shape: BoxShape.rectangle,
+              ),
+              child:   
+            ),
+            */
+            
+
+            //subtitle: Text(font 12), DATE MODIFIED
+
+            onTap: (){
+              globals.itemIndex = index;
+              globals.activeTabItems = tabItems;
+              Navigator.pushNamed(context, '/selected_item');
+            },
+          ),
+        );
+      }, 
+    );
+  }
+  
+  final Widget _drawerHeader = SizedBox(
+    height: 60,
+    child: DrawerHeader(
+      child: const Text("Edit Options", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),),
+      decoration: BoxDecoration(
+        color: Colors.indigo[400]
+      ),
+    )
+  );
+
+  Widget makeHeaderTop(){
+    return Container(
+      alignment: AlignmentDirectional.topStart,
+      height: 150,
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
+      child: Text.rich(
+        TextSpan(
+          
+          children: <TextSpan>[
+            TextSpan(
+              text: globals.testLists[globals.selectedIndex].title,
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+            ),
+
+            TextSpan(
+              text: '\n${globals.testLists[globals.selectedIndex].listLen} Items\n\n',
+              style: const TextStyle(fontSize: 16)
+            ),
+
+            TextSpan(
+              text: globals.testLists[globals.selectedIndex].description,
+              style: const TextStyle(fontSize: 12)
+            ),
+          ]
+        ),
+      ),
+    );
+  }
+
+  Widget makeCustomHeader(TabController controller){
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: CustomHeader(
+        top: makeHeaderTop(),
+        bottom: TabBar(
+          controller: controller,
+          isScrollable: true,
+          labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          labelColor: Colors.black,
+          tabs: const <Tab>[
+            Tab(text: 'ONGOING'),
+            Tab(text: 'NOT STARTED'),
+            Tab(text: 'BACKBURNER'),
+            Tab(text: 'COMPLETED'),
+            Tab(text: 'DROPPED'),
+          ]
+        )
+      ),
+    );
+  }
+
+  List<List<ListItem>> makeTabLists(List<ListItem> items){
+    List<ListItem> bitems1 = [], bitems2 = [], bitems3 = [], bitems4 = [], bitems5 = [];
+    List<List<ListItem>> result = [bitems1, bitems2, bitems3, bitems4, bitems5];
+    for(int i = 0; i < items.length; i++){
+      if(items[i].status == "Ongoing"){
+        result[0].add(items[i]);
+      }
+      else if(items[i].status == "Not Started"){
+        result[1].add(items[i]);
+      }
+      else if(items[i].status == "BackBurner"){
+        result[2].add(items[i]);
+      }
+      else if(items[i].status == "Completed"){
+        result[3].add(items[i]);
+      }
+      else if(items[i].status == "Dropped"){
+        result[4].add(items[i]);
+      }
+    }
+    return result;
+  }
+
+  Widget makeItemView(BuildContext context, TabController controller, List<List<ListItem>> tabs){
+    return SliverFillRemaining(
+      child: Container(
+        color: Colors.white,
+        height: MediaQuery.of(context).size.height,
+        child: TabBarView(
+          controller: controller,
+          children: [
+            //${globals.testLists[globals.selectedIndex].title}
+            (tabs[0].isNotEmpty)? (itemsListView(tabs[0])) : (const Center(child: Text("No ongoing items"))),
+            (tabs[1].isNotEmpty)? (itemsListView(tabs[1])) : (const Center(child: Text("No unstarted items"))),
+            (tabs[2].isNotEmpty)? (itemsListView(tabs[2])) : (const Center(child: Text("No backburner items"))),
+            (tabs[3].isNotEmpty)? (itemsListView(tabs[3])) : (const Center(child: Text("No completed items"))),
+            (tabs[4].isNotEmpty)? (itemsListView(tabs[4])) : (const Center(child: Text("No dropped items"))),
+            
+            //itemsListView(tabs[1]), 
+            //itemsListView(tabs[2]),
+            //itemsListView(tabs[3]),
+            //itemsListView(tabs[4]),
+          ]
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +230,8 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
               const Divider(
                 thickness: 2,
+                indent: 15,
+                endIndent: 15,
               ),
 
               ListTile(
@@ -157,141 +340,6 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 }
 
 
-Widget _drawerHeader = SizedBox(
-  height: 60,
-  child: DrawerHeader(
-    child: const Text("Edit Options", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),),
-    decoration: BoxDecoration(
-      color: Colors.indigo[400]
-    ),
-  )
-);
-
-Widget makeHeaderTop(){
-  return Container(
-    alignment: AlignmentDirectional.topStart,
-    height: 150,
-    padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
-    child: Text.rich(
-      TextSpan(
-        
-        children: <TextSpan>[
-          TextSpan(
-            text: globals.testLists[globals.selectedIndex].title,
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-          ),
-
-          TextSpan(
-            text: '\n${globals.testLists[globals.selectedIndex].listLen} Items\n\n',
-            style: const TextStyle(fontSize: 16)
-          ),
-
-          TextSpan(
-            text: globals.testLists[globals.selectedIndex].description,
-            style: const TextStyle(fontSize: 12)
-          ),
-        ]
-      ),
-    ),
-  );
-}
-
-Widget makeCustomHeader(TabController controller){
-  return SliverPersistentHeader(
-    pinned: true,
-    delegate: CustomHeader(
-      top: makeHeaderTop(),
-      bottom: TabBar(
-        controller: controller,
-        isScrollable: true,
-        labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        labelColor: Colors.black,
-        tabs: const <Tab>[
-          Tab(text: 'ONGOING'),
-          Tab(text: 'NOT STARTED'),
-          Tab(text: 'BACKBURNER'),
-          Tab(text: 'COMPLETED'),
-          Tab(text: 'DROPPED'),
-        ]
-      )
-    ),
-  );
-}
-
-List<List<ListItem>> makeTabLists(List<ListItem> items){
-  List<ListItem> bitems1 = [], bitems2 = [], bitems3 = [], bitems4 = [], bitems5 = [];
-  List<List<ListItem>> result = [bitems1, bitems2, bitems3, bitems4, bitems5];
-  for(int i = 0; i < items.length; i++){
-    if(items[i].status == "Ongoing"){
-      result[0].add(items[i]);
-    }
-    else if(items[i].status == "Not Started"){
-      result[1].add(items[i]);
-    }
-    else if(items[i].status == "BackBurner"){
-      result[2].add(items[i]);
-    }
-    else if(items[i].status == "Completed"){
-      result[3].add(items[i]);
-    }
-    else if(items[i].status == "Dropped"){
-      result[4].add(items[i]);
-    }
-  }
-  return result;
-}
-
-//ADD DATE MODIFIED
-Widget itemsListView(List<ListItem> tabItems){
-  return ListView.separated(
-    separatorBuilder: (BuildContext context, int index) => const Divider(), 
-    itemCount: tabItems.length,
-    itemBuilder: (BuildContext context, int index){
-      return Container(
-        padding: const EdgeInsets.all(10.0),
-        child: ListTile(
-          title: Text(
-            tabItems[index].title,
-            style: const TextStyle(fontSize: 14, color: Colors.black),
-          ),
-
-          //subtitle: Text(font 12), DATE MODIFIED
-
-          onTap: (){
-            globals.itemIndex = index;
-            globals.activeTabItems = tabItems;
-            //Navigator.pushNamed(context, '/selected_list');
-          },
-        ),
-      );
-    }, 
-  );
-}
-
-Widget makeItemView(BuildContext context, TabController controller, List<List<ListItem>> tabs){
-  return SliverFillRemaining(
-    child: Container(
-      color: Colors.white,
-      height: MediaQuery.of(context).size.height,
-      child: TabBarView(
-        controller: controller,
-        children: [
-          //${globals.testLists[globals.selectedIndex].title}
-          (tabs[0].isNotEmpty)? (itemsListView(tabs[0])) : (const Center(child: Text("No ongoing items"))),
-          (tabs[1].isNotEmpty)? (itemsListView(tabs[1])) : (const Center(child: Text("No unstarted items"))),
-          (tabs[2].isNotEmpty)? (itemsListView(tabs[2])) : (const Center(child: Text("No backburner items"))),
-          (tabs[3].isNotEmpty)? (itemsListView(tabs[3])) : (const Center(child: Text("No completed items"))),
-          (tabs[4].isNotEmpty)? (itemsListView(tabs[4])) : (const Center(child: Text("No dropped items"))),
-          
-          //itemsListView(tabs[1]), 
-          //itemsListView(tabs[2]),
-          //itemsListView(tabs[3]),
-          //itemsListView(tabs[4]),
-        ]
-      ),
-    ),
-  );
-}
 
 class CustomHeader extends SliverPersistentHeaderDelegate {
   final TabBar bottom;

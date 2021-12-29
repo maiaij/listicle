@@ -9,6 +9,7 @@ import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/splash.dart';
 import 'package:listicle/screens/pages/homepage.dart';
 import 'package:listicle/screens/pages/selected_list_page.dart';
+import 'package:listicle/screens/pages/selected_item_page.dart';
 import 'package:listicle/screens/pages/new_list_dialogue.dart';
 import 'package:listicle/screens/pages/add_list_item.dart';
 import 'package:listicle/screens/pages/edit_list_title.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
           '/wrapper': (context) => Wrapper(),
           '/home': (context) => const Homepage(),
           '/selected_list': (context) => const SelectedList(),
+          '/selected_item': (context) => const SelectedItem(),
         },
         //initialRoute: '/home',
         onGenerateRoute: (RouteSettings settings){

@@ -5,7 +5,7 @@ import 'package:listicle/globals.dart' as globals;
 import 'dart:math' as math;
 
 // all drawer navigation currently pops and pushes named
-// add a delete confirmation dialogue
+// add date modified and progress
 
 class SelectedList extends StatefulWidget {
   const SelectedList({ Key? key}) : super(key: key);
@@ -44,14 +44,6 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                 title: const Text('Add Item', style: TextStyle(fontSize: 12)),
                 onTap: () async{
                   await Navigator.pushNamed(context, '/add_list_item');
-                  //setState(() {
-                  //   edited = !edited;
-                  //});
-                  //Navigator.pop(context);
-                  //Navigator.pop(context);
-                  //Navigator.pushNamed(context, '/selected_list');
-                  
-                  
                 },
               ),
 
@@ -76,9 +68,46 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
               ListTile(
                 title: const Text('Delete List', style: TextStyle(fontSize: 12)),
                 onTap: (){
-                  globals.testLists.removeAt(globals.selectedIndex);
-                  Navigator.pop(context);
-                  Navigator.pop(context, false);
+                  showDialog<void>(
+                    barrierDismissible: false, // user must tap button!
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Delete "${globals.testLists[globals.selectedIndex].title}"?'),
+                        content: const Text('This action cannot be undone'),
+                        actions: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                              ),
+                              child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+
+                            ElevatedButton(
+                              child: const Text('Delete'),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 202, 97, 95)),
+                              ),
+                              onPressed: () {
+                                globals.testLists.removeAt(globals.selectedIndex);
+                                Navigator.of(context).pop();
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ],
+                          ),
+                            
+                        ],
+                      );
+                    },
+                  );
                 },
               ),
             ]
@@ -139,30 +168,27 @@ Widget _drawerHeader = SizedBox(
 );
 
 Widget makeHeaderTop(){
-  //int items = globals.testLists[globals.selectedIndex].listLen;
-  //print(globals.testLists[globals.selectedIndex].listLen);
-  //print("back bb $items");
   return Container(
     alignment: AlignmentDirectional.topStart,
     height: 150,
-    padding: const EdgeInsets.all(20.0),
+    padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
     child: Text.rich(
       TextSpan(
         
         children: <TextSpan>[
           TextSpan(
             text: globals.testLists[globals.selectedIndex].title,
-            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold)
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
           ),
 
           TextSpan(
             text: '\n${globals.testLists[globals.selectedIndex].listLen} Items\n\n',
-            style: const TextStyle(fontSize: 18)
+            style: const TextStyle(fontSize: 16)
           ),
 
           TextSpan(
             text: globals.testLists[globals.selectedIndex].description,
-            style: const TextStyle(fontSize: 14)
+            style: const TextStyle(fontSize: 12)
           ),
         ]
       ),

@@ -50,7 +50,8 @@ class _EditListDescState extends State<EditListDesc> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
                   controller: _description,
-                  
+                  maxLength: 150,
+                  maxLines: 3,
                   decoration:  const InputDecoration(labelText: "Update Description"),
                   validator: (value){
                     if(value == null || value.isEmpty){

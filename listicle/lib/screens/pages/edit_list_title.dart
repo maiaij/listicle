@@ -50,6 +50,8 @@ class _EditListTitleState extends State<EditListTitle> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
+                  //20
+                  maxLength: 20,
                   controller: _title,
                   decoration:  const InputDecoration(labelText: "Update Title"),
                   validator: (value){
@@ -60,9 +62,6 @@ class _EditListTitleState extends State<EditListTitle> {
                   },
                 ),
               ),
-
-            
-
               
             ],
           ),

@@ -37,17 +37,13 @@ class _Gallery_ViewState extends State<Gallery_View> {
                   ),
                   onTap: () async{
                     globals.selectedIndex = i;
-                    final result = await Navigator.pushNamed(context, '/selected_list');
-            
-                    if(result == true){
-                      setState(() {
-                        globals.testLists[globals.selectedIndex].updateListLen();
-                      });
-                    }
+                    await Navigator.pushNamed(context, '/selected_list');
 
-                    else{
-                      setState(() {});
-                    }
+                    setState(() {
+                      if(globals.selectedIndex == globals.testLists.length){
+                        globals.selectedIndex --;
+                      }
+                    });
                     
                   },
                 )

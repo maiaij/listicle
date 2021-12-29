@@ -45,6 +45,7 @@ class _AddNewListState extends State<AddNewList> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
                   controller: _title,
+                  maxLength: 20,
                   decoration: const InputDecoration(labelText: "List Name"),
                   validator: (value){
                     if(value == null || value.isEmpty){

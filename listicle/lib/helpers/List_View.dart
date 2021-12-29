@@ -36,17 +36,13 @@ class _List_ViewState extends State<List_View> {
 
           onTap: () async{
             globals.selectedIndex = index;
-            final result = await Navigator.pushNamed(context, '/selected_list');
+            await Navigator.pushNamed(context, '/selected_list');
             
-            if(result == true){
-              setState(() {
-                globals.testLists[globals.selectedIndex].updateListLen();
-              });
-            }
-
-            else{
-              setState(() {});
-            }
+            setState(() {
+              if(globals.selectedIndex == globals.testLists.length){
+                globals.selectedIndex --;
+              }
+            });
             
           },
         ),

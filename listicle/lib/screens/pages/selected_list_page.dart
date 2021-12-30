@@ -252,7 +252,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                 title: const Text('Delete List', style: TextStyle(fontSize: 12)),
                 onTap: (){
                   showDialog<void>(
-                    barrierDismissible: false, // user must tap button!
+                    barrierDismissible: true, // false if user must tap button!
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(

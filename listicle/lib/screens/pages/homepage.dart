@@ -25,11 +25,11 @@ class _HomePageState extends State<Homepage> {
   @override
   void initState(){
     super.initState();
-    ListItem one = ListItem("book one", "novels", "Ongoing", 10, 5.0, false, "link", "so far so good");
-    ListItem two = ListItem("book two", "novels", "Not Started", 2, 0.0, false, "link", "just started");
-    ListItem three = ListItem("comic one", "comics", "Dropped", 53, 3.9, false, "link", "so far so good");
-    ListItem four = ListItem("comic two", "comics", "BackBurner", 27, 0.0, false, "link", "very cute");
-    ListItem five = ListItem("anime one", "anime", "Completed", 24, 4.0, false, "link", "spoopy");
+    ListItem one = ListItem("book one", "novels", "Ongoing", 10, 5.0, false, "", "so far so good");
+    ListItem two = ListItem("book two", "novels", "Not Started", 2, 0.0, false, "", "just started");
+    ListItem three = ListItem("comic one", "comics", "Dropped", 53, 3.9, false, "", "so far so good");
+    ListItem four = ListItem("comic two", "comics", "BackBurner", 27, 0.0, false, "", "very cute");
+    ListItem five = ListItem("anime one", "anime", "Completed", 24, 4.0, false, "", "spoopy");
 
     test1.add(one);
     test1.add(two);

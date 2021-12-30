@@ -14,6 +14,7 @@ import 'package:listicle/screens/pages/new_list_dialogue.dart';
 import 'package:listicle/screens/pages/add_list_item.dart';
 import 'package:listicle/screens/pages/edit_list_title.dart';
 import 'package:listicle/screens/pages/edit_list_desc.dart';
+import 'package:listicle/screens/pages/edit_item_title.dart';
 import 'LoginPage.dart';
 
 void main() async {
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const Homepage(),
           '/selected_list': (context) => const SelectedList(),
           '/selected_item': (context) => const SelectedItem(),
+          
         },
         //initialRoute: '/home',
         onGenerateRoute: (RouteSettings settings){
@@ -64,6 +66,11 @@ class MyApp extends StatelessWidget {
 
             case '/edit_list_description': return MaterialPageRoute(
               builder: (context) => const EditListDesc(),
+              fullscreenDialog: true,
+            );
+
+            case '/edit_item_title': return MaterialPageRoute(
+              builder: (context) => const EditItemTitle(),
               fullscreenDialog: true,
             );
 

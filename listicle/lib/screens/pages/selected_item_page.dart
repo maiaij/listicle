@@ -166,7 +166,7 @@ class _SelectedItemState extends State<SelectedItem> {
                 barrierDismissible: true, // false if user must tap button!
                 context: context,
                 builder: (BuildContext context) {
-                  double newRating = globals.activeTabItems[globals.itemIndex].rating;
+                  double newRating = 5;
                   return AlertDialog(
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -250,57 +250,48 @@ class _SelectedItemState extends State<SelectedItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // HEADER
-            SizedBox(
-              height: (globals.activeTabItems[globals.itemIndex].title.length <= 15)?
-              (120): 
-              (globals.activeTabItems[globals.itemIndex].title.length <= 23)?
-              (160):
-              (globals.activeTabItems[globals.itemIndex].title.length <= 40)?
-              (190):
-              (230),
-              child: Container(
-                color: Colors.white,
-                alignment: AlignmentDirectional.topStart,
-                height: 150,
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text.rich(
-                      TextSpan(
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: globals.activeTabItems[globals.itemIndex].title,
-                            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-                          ),
-                          TextSpan(
-                            text: "\n${globals.activeTabItems[globals.itemIndex].listName}\n",
-                            style: const TextStyle(fontSize: 24)
-                          ),
+            Container(
+              color: Colors.white,
+              alignment: AlignmentDirectional.topStart,
+              //height: 150,
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: globals.activeTabItems[globals.itemIndex].title,
+                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+                        ),
+                        TextSpan(
+                          text: "\n${globals.activeTabItems[globals.itemIndex].listName}\n",
+                          style: const TextStyle(fontSize: 24)
+                        ),
 
-                          TextSpan(
-                            text: "Progress: ${globals.activeTabItems[globals.itemIndex].progress}",
-                            style: const TextStyle(fontSize: 14)
-                          ),
-                        ]
-                      )
-                    ),
-
-                    Row(
-                      children: [
-                        const Icon(Icons.star_rounded, size: 20),
-                        Text(
-                          " ${globals.activeTabItems[globals.itemIndex].rating}",
+                        TextSpan(
+                          text: "Progress: ${globals.activeTabItems[globals.itemIndex].progress}",
                           style: const TextStyle(fontSize: 14)
-                        )
-                      ],
-                    ),
-                  
-                  ]
-                )
-              ),        
-            ),
+                        ),
+                      ]
+                    )
+                  ),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.star_rounded, size: 20),
+                      Text(
+                        " ${globals.activeTabItems[globals.itemIndex].rating}",
+                        style: const TextStyle(fontSize: 14)
+                      )
+                    ],
+                  ),
+                
+                ]
+              )
+            ), 
 
             // BUTTON ROW
             ButtonBar(
@@ -348,7 +339,7 @@ class _SelectedItemState extends State<SelectedItem> {
                     ),
                   ),
                   onPressed: (){
-                    
+                    // if link open link
                   }
                 ),
               ],
@@ -360,7 +351,7 @@ class _SelectedItemState extends State<SelectedItem> {
             Container(
               color: Colors.white,
               alignment: AlignmentDirectional.topStart,
-              height: 150,
+              //height: 150,
               padding: const EdgeInsets.only(left: 10, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -371,9 +362,11 @@ class _SelectedItemState extends State<SelectedItem> {
                     style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
                   ), 
 
-                  /**  change to editable text
+                  // change to editable text
                   EditableText(
-                    maxLines: 6,
+                    //keyboardType: TextInputType.visiblePassword,
+                    //onEditingComplete: (){FocusScope.of(context).nextFocus();},
+                    maxLines: 20,
                     controller: _notesController, 
                     focusNode: FocusNode(), 
                     style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.black), 
@@ -387,12 +380,12 @@ class _SelectedItemState extends State<SelectedItem> {
                         globals.activeTabItems[globals.itemIndex].notes = _notesController.text;
                       }
                     },
-                  ), */
+                  ),
                   
-                  Text(
+                  /**Text(
                     globals.activeTabItems[globals.itemIndex].notes,
                     style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                  ), 
+                  ), */
                 ],
               )
             )

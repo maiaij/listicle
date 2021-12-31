@@ -419,7 +419,7 @@ class _SelectedItemState extends State<SelectedItem> {
                       Navigator.pushNamed(context, '/add_item_link');
                     }
                     else{
-                      //_launchURL(globals.activeTabItems[globals.itemIndex].link);
+                      _launchURL(globals.activeTabItems[globals.itemIndex].link);
                     }
                   }
                 ),

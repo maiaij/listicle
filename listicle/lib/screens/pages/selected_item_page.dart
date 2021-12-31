@@ -78,14 +78,14 @@ class _SelectedItemState extends State<SelectedItem> {
               },
             ),
 
-            /**
+            ///**
             ListTile(
               title: const Text('Edit Notes', style: TextStyle(fontSize: 12)),
               onTap: () {
                 Navigator.pushNamed(context, '/edit_item_notes');
               },
             ),
-             */
+            // */
             
             ListTile(
               title: const Text('Edit Progress', style: TextStyle(fontSize: 12)),
@@ -444,7 +444,7 @@ class _SelectedItemState extends State<SelectedItem> {
                     style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
                   ), 
 
-                  // change to editable text
+                  /** change to editable text
                   EditableText(
                     keyboardType: TextInputType.visiblePassword,
                     onEditingComplete: (){
@@ -518,11 +518,11 @@ class _SelectedItemState extends State<SelectedItem> {
                     backgroundCursorColor: const Color.fromARGB(255, 197, 202, 233),
                     
                   ),
-                  
-                  /**Text(
+                  */
+                  Text(
                     globals.activeTabItems[globals.itemIndex].notes,
-                    style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
-                  ), */
+                    style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  ), 
                 ],
               )
             )

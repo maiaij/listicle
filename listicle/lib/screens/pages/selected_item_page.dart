@@ -192,8 +192,7 @@ class _SelectedItemState extends State<SelectedItem> {
             globals.testLists[globals.selectedIndex].items[changed] = globals.activeTabItems[globals.itemIndex];
             
             Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pushNamed(context, '/selected_list');
+            Navigator.popAndPushNamed(context, '/selected_list');
           },
         ),
         actions: [
@@ -420,7 +419,7 @@ class _SelectedItemState extends State<SelectedItem> {
                       Navigator.pushNamed(context, '/add_item_link');
                     }
                     else{
-                      _launchURL(globals.activeTabItems[globals.itemIndex].link);
+                      //_launchURL(globals.activeTabItems[globals.itemIndex].link);
                     }
                   }
                 ),

@@ -300,11 +300,11 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(
+          SliverAppBar(
             leading: BackButton(),
             automaticallyImplyLeading: true,
             //pinned: true,
-            iconTheme: IconThemeData(color: Colors.black),
+            iconTheme: const IconThemeData(color: Colors.black),
             elevation: 0,
             backgroundColor: Colors.white,
             snap: true,

@@ -28,7 +28,6 @@ class _AddItemLinkState extends State<AddItemLink> {
                 });
 
                 Navigator.pop(context);
-                Navigator.pop(context);
                 Navigator.popAndPushNamed(context, '/selected_item');
               }
             }

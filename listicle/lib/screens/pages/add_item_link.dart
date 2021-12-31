@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/globals.dart' as globals;
 
-//might not need this
-
-class EditNotes extends StatefulWidget {
-  const EditNotes({ Key? key }) : super(key: key);
+class AddItemLink extends StatefulWidget {
+  const AddItemLink({ Key? key }) : super(key: key);
 
   @override
-  _EditNotesState createState() => _EditNotesState();
+  _AddItemLinkState createState() => _AddItemLinkState();
 }
 
-class _EditNotesState extends State<EditNotes> {
+class _AddItemLinkState extends State<AddItemLink> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _notes = TextEditingController();
+  final TextEditingController _link = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    _notes.text = globals.activeTabItems[globals.itemIndex].notes;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Item Notes'),
+        title: const Text('Add Link to Item'),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  globals.activeTabItems[globals.itemIndex].notes = _notes.text;
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Notes updated!")));
+                  globals.activeTabItems[globals.itemIndex].link = _link.text;
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Link Added!")));
                 });
 
                 Navigator.pop(context);
@@ -49,12 +46,12 @@ class _EditNotesState extends State<EditNotes> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
                   //20
-                  maxLines: 20,
-                  controller: _notes,
-                  decoration:  const InputDecoration(labelText: "Update Notes"),
+                  controller: _link,
+                  keyboardType: TextInputType.url,
+                  decoration:  const InputDecoration(labelText: "Add Link"),
                   validator: (value){
                     if(value == null || value.isEmpty){
-                      return 'Please enter a title';
+                      return 'Please enter a link';
                     }
                     return null;
                   },

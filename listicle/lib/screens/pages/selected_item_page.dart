@@ -4,6 +4,7 @@ import 'package:listicle/models/ListItem.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:listicle/globals.dart' as globals;
 import 'dart:math' as math;
+import 'package:url_launcher/url_launcher.dart';
 
 class SelectedItem extends StatefulWidget {
   const SelectedItem({ Key? key }) : super(key: key);
@@ -77,20 +78,94 @@ class _SelectedItemState extends State<SelectedItem> {
               },
             ),
 
+            /**
             ListTile(
               title: const Text('Edit Notes', style: TextStyle(fontSize: 12)),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, '/edit_item_notes');
+              },
+            ),
+             */
+            
+            ListTile(
+              title: const Text('Edit Progress', style: TextStyle(fontSize: 12)),
+              onTap: () {
+                Navigator.pushNamed(context, '/edit_item_progress');
+              },
             ),
 
             ListTile(
-              title: const Text('Edit Progress', style: TextStyle(fontSize: 12)),
-              onTap: () {},
+              title: const Text('Remove Link', style: TextStyle(fontSize: 12)),
+              onTap: () {
+                showDialog<void>(
+                    barrierDismissible: true, // false if user must tap button!
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Remove Link?'),
+                        content: const Text('This action cannot be undone'),
+                        actions: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                              ),
+                              child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+
+                            ElevatedButton(
+                              child: const Text('Remove'),
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 202, 97, 95)),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  globals.activeTabItems[globals.itemIndex].link = '';
+                                  Navigator.pop(context);
+                                });
+                              },
+                            ),
+                            ],
+                          ),
+                            
+                        ],
+                      );
+                    },
+                  );
+              }
             ),
+
+            const Divider(
+              thickness: 2,
+              indent: 15,
+              endIndent: 15,
+            ),
+
+            ListTile(
+              title: const Text('Move Item', style: TextStyle(fontSize: 12)),
+              onTap: () {
+                // provide a dropdown to select a new list
+                // confirmation of move "Are You Sure?"
+                // add item to new list
+                // remove item from current list
+                // redirect to new list
+              },
+            ),
+
 
           ],
         ), 
       ),
     );
+  }
+
+  void _launchURL(String url) async {
+  if (!await launch(url)) throw 'Could not launch $url';
   }
 
   @override
@@ -122,6 +197,7 @@ class _SelectedItemState extends State<SelectedItem> {
           },
         ),
         actions: [
+          // recommend button
           (globals.activeTabItems[globals.itemIndex].recommend == true)?
           (
             IconButton(
@@ -333,13 +409,19 @@ class _SelectedItemState extends State<SelectedItem> {
                     child:  Center(
                       child: Text(
                         (globals.activeTabItems[globals.itemIndex].link.isEmpty)?
-                        ('No Link'):('CONTINUE'), 
+                        ('Add Link'):('CONTINUE'), 
                         style: const TextStyle(color: Colors.black, fontSize: 14)
                       )
                     ),
                   ),
                   onPressed: (){
                     // if link open link
+                    if(globals.activeTabItems[globals.itemIndex].link.isEmpty){
+                      Navigator.pushNamed(context, '/add_item_link');
+                    }
+                    else{
+                      _launchURL(globals.activeTabItems[globals.itemIndex].link);
+                    }
                   }
                 ),
               ],
@@ -364,22 +446,77 @@ class _SelectedItemState extends State<SelectedItem> {
 
                   // change to editable text
                   EditableText(
-                    //keyboardType: TextInputType.visiblePassword,
-                    //onEditingComplete: (){FocusScope.of(context).nextFocus();},
+                    keyboardType: TextInputType.visiblePassword,
+                    onEditingComplete: (){
+                      if(globals.activeTabItems[globals.itemIndex].notes == _notesController.text){
+                        setState(() {
+                          globals.activeTabItems[globals.itemIndex].notes = _notesController.text;
+                        });
+                      }
+
+                      else{
+                        // add an alert
+                        showDialog<void>(
+                          barrierDismissible: true, // false if user must tap button!
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Update Notes?'),
+                              content: const Text('This action cannot be undone'),
+                              actions: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                                    ),
+                                    child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                                    onPressed: () {
+                                      setState(() {
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                  ),
+
+                                  ElevatedButton(
+                                    child: const Text('Save'),
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 148, 159, 226)),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      if(_notesController.text.isEmpty){
+                                        setState(() {
+                                          globals.activeTabItems[globals.itemIndex].notes = 'No Notes Yet';
+                                        });
+                                      }
+                                      else{
+                                        setState(() {
+                                          globals.activeTabItems[globals.itemIndex].notes = _notesController.text;
+                                        });
+                                      }
+                                      
+                                    },
+                                  ),
+                                  ],
+                                ),
+                                  
+                              ],
+                            );
+                          },
+                        );
+                      }
+                        
+                      //FocusScope.of(context).nextFocus();
+                    },
                     maxLines: 20,
                     controller: _notesController, 
                     focusNode: FocusNode(), 
                     style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.black), 
                     cursorColor: Colors.indigo, 
                     backgroundCursorColor: const Color.fromARGB(255, 197, 202, 233),
-                    onChanged: (value){
-                      if(value.isEmpty){
-                        globals.activeTabItems[globals.itemIndex].notes = 'No Notes Yet';
-                      }
-                      else{
-                        globals.activeTabItems[globals.itemIndex].notes = _notesController.text;
-                      }
-                    },
+                    
                   ),
                   
                   /**Text(

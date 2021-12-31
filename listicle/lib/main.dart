@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:listicle/screens/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +16,9 @@ import 'package:listicle/screens/pages/add_list_item.dart';
 import 'package:listicle/screens/pages/edit_list_title.dart';
 import 'package:listicle/screens/pages/edit_list_desc.dart';
 import 'package:listicle/screens/pages/edit_item_title.dart';
+import 'package:listicle/screens/pages/edit_progress.dart';
+import 'package:listicle/screens/pages/edit_notes.dart';
+import 'package:listicle/screens/pages/add_item_link.dart';
 import 'LoginPage.dart';
 
 void main() async {
@@ -71,6 +75,21 @@ class MyApp extends StatelessWidget {
 
             case '/edit_item_title': return MaterialPageRoute(
               builder: (context) => const EditItemTitle(),
+              fullscreenDialog: true,
+            );
+
+            case '/edit_item_progress': return MaterialPageRoute(
+              builder: (context) => const EditProgress(),
+              fullscreenDialog: true,
+            );
+
+            case '/edit_item_notes': return MaterialPageRoute(
+              builder: (context) => const EditNotes(),
+              fullscreenDialog: true,
+            );
+
+            case '/add_item_link': return MaterialPageRoute(
+              builder: (context) => const AddItemLink(),
               fullscreenDialog: true,
             );
 

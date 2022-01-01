@@ -45,6 +45,7 @@ class _SelectedItemState extends State<SelectedItem> {
                       if(globals.activeTabItems[globals.itemIndex].progress > 0){
                         setState(() {
                           globals.activeTabItems[globals.itemIndex].progress --;
+                          globals.activeTabItems[globals.itemIndex].updateDate();
                         });
                       }
                     }
@@ -57,6 +58,7 @@ class _SelectedItemState extends State<SelectedItem> {
                     onPressed: (){
                       setState(() {
                         globals.activeTabItems[globals.itemIndex].progress ++;
+                        globals.activeTabItems[globals.itemIndex].updateDate();
                       });
                     }
                   ),

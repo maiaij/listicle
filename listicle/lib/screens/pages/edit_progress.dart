@@ -25,6 +25,7 @@ class _EditProgressState extends State<EditProgress> {
               if(_formKey.currentState!.validate()){
                 setState(() {
                   globals.activeTabItems[globals.itemIndex].progress = int.parse(_progress.text);
+                  globals.activeTabItems[globals.itemIndex].updateDate();
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Progress updated!")));
                 });
 

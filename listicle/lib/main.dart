@@ -19,6 +19,7 @@ import 'package:listicle/screens/pages/edit_item_title.dart';
 import 'package:listicle/screens/pages/edit_progress.dart';
 import 'package:listicle/screens/pages/edit_notes.dart';
 import 'package:listicle/screens/pages/add_item_link.dart';
+import 'package:listicle/screens/pages/recommendations_page.dart';
 import 'LoginPage.dart';
 
 void main() async {

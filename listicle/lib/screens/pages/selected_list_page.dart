@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:listicle/globals.dart' as globals;
@@ -27,7 +28,6 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
     );
   }
 
-  //ADD DATE MODIFIED
   Widget itemsListView(List<ListItem> tabItems){
     return ListView.separated(
       separatorBuilder: (BuildContext context, int index) => const Divider(), 
@@ -38,7 +38,12 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
           child: ListTile(
             title: Text(
               tabItems[index].title,
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+            ),
+
+            subtitle: Text(
+              "Updated: ${DateFormat.yMMMd().format(tabItems[index].dateModified)}",
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
 
             trailing: Row(
@@ -52,6 +57,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                     if(tabItems[index].progress > 0){
                       setState(() {
                         tabItems[index].progress --;
+                        tabItems[index].updateDate();
                       });
                     }
                   }
@@ -66,6 +72,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                   onPressed: (){
                     setState(() {
                       tabItems[index].progress ++;
+                      tabItems[index].updateDate();
                     });
                   }
                 ),
@@ -84,9 +91,6 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
               child:   
             ),
             */
-            
-
-            //subtitle: Text(font 12), DATE MODIFIED
 
             onTap: (){
               globals.itemIndex = index;

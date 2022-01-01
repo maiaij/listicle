@@ -15,6 +15,9 @@ class SelectedItem extends StatefulWidget {
 }
 
 class _SelectedItemState extends State<SelectedItem> {
+  String? selectedDestination;
+  String _destination = '';
+
   final Widget _drawerHeader = SizedBox(
     height: 60,
     child: DrawerHeader(
@@ -24,6 +27,16 @@ class _SelectedItemState extends State<SelectedItem> {
       ),
     )
   );
+
+  List<DropdownMenuItem<String>>? makeSwapDropdown(){
+    List<DropdownMenuItem<String>>? result = [];
+    
+    for(int i = 0; i < globals.testLists.length; i++){
+      result.add(DropdownMenuItem(child: Text(globals.testLists[i].title),value: globals.testLists[i].title));
+    }
+
+    return result;
+  }
 
   Widget makeEndDrawer(){
     return SizedBox(
@@ -157,6 +170,81 @@ class _SelectedItemState extends State<SelectedItem> {
                 // add item to new list
                 // remove item from current list
                 // redirect to new list
+                showDialog<void>(
+                  barrierDismissible: true, // false if user must tap button!
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Move "${globals.activeTabItems[globals.itemIndex].title}" to another list?'),
+                      content:Container(
+                        //height: 40,
+                        //decoration: BoxDecoration(color: Colors.indigo[50], borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField(
+                            decoration: const InputDecoration(labelText: "List Options"),
+                            value: selectedDestination,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedDestination = newValue!;
+                                _destination = selectedDestination!;
+                              });
+                            },
+
+                            items: makeSwapDropdown(),
+                            
+                          )
+                        ),  
+                      ),
+                      actions: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                            ),
+                            child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+
+                          ElevatedButton(
+                            child: const Text('Move'),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 148, 159, 226)),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                List<String> listTitles = [];
+                                for(int i = 0; i < globals.testLists.length;i++){
+                                  listTitles.add(globals.testLists[i].title);
+                                }
+                                
+                                // add
+                                int destIndex = listTitles.indexOf(_destination);
+                                globals.testLists[destIndex].items.add(globals.activeTabItems[globals.itemIndex]);
+                                globals.testLists[destIndex].updateListLen();
+
+                                // remove
+                                int changed = globals.testLists[globals.selectedIndex].items.indexOf(globals.activeTabItems[globals.itemIndex]);
+                                globals.testLists[globals.selectedIndex].items.removeAt(changed);
+                                globals.testLists[globals.selectedIndex].updateListLen();
+
+                                Navigator.of(context).pop();
+                                Navigator.pop(context);
+                                Navigator.popAndPushNamed(context, '/selected_list');
+                              });
+                            },
+                          ),
+                          ],
+                        ),
+                          
+                      ],
+                    );
+                  },
+                );
               },
             ),
 
@@ -169,9 +257,6 @@ class _SelectedItemState extends State<SelectedItem> {
             ListTile(
               title: const Text('Delete Item', style: TextStyle(fontSize: 12)),
               onTap: () {
-                // alert confirmation
-                // remove from list
-                // pop back
                 showDialog<void>(
                   barrierDismissible: true, // false if user must tap button!
                   context: context,
@@ -364,7 +449,7 @@ class _SelectedItemState extends State<SelectedItem> {
                         ElevatedButton(
                           child: const Text('Save'),
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 202, 97, 95)),
+                            backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 148, 159, 226)),
                           ),
                           onPressed: () {
                             setState(() {

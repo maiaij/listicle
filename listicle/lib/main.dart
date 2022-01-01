@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           '/login_screen': (context) => LoginPage(),
           '/wrapper': (context) => Wrapper(),
           '/home': (context) => const Homepage(),
-          '/recommended': (context) => RecommendedList(),
+          '/recommended': (context) => const RecommendedList(),
           '/selected_list': (context) => const SelectedList(),
           '/selected_item': (context) => const SelectedItem(),
           

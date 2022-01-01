@@ -105,7 +105,7 @@ class _SelectedItemState extends State<SelectedItem> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Remove Link?'),
+                        title: const Text('Remove Link?'),
                         content: const Text('This action cannot be undone'),
                         actions: <Widget>[
                           Row(
@@ -157,6 +157,66 @@ class _SelectedItemState extends State<SelectedItem> {
                 // add item to new list
                 // remove item from current list
                 // redirect to new list
+              },
+            ),
+
+            const Divider(
+              thickness: 2,
+              indent: 15,
+              endIndent: 15,
+            ),
+
+            ListTile(
+              title: const Text('Delete Item', style: TextStyle(fontSize: 12)),
+              onTap: () {
+                // alert confirmation
+                // remove from list
+                // pop back
+                showDialog<void>(
+                  barrierDismissible: true, // false if user must tap button!
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Delete ${globals.activeTabItems[globals.itemIndex].title}?'),
+                      content: const Text('This action cannot be undone'),
+                      actions: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
+                            ),
+                            child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+
+                          ElevatedButton(
+                            child: const Text('Delete'),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 202, 97, 95)),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                int changed = globals.testLists[globals.selectedIndex].items.indexOf(globals.activeTabItems[globals.itemIndex]);
+                                globals.testLists[globals.selectedIndex].items.removeAt(changed);
+                                globals.testLists[globals.selectedIndex].updateListLen();
+                                Navigator.of(context).pop();
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.popAndPushNamed(context, '/selected_list');
+                              });
+                            },
+                          ),
+                          ],
+                        ),
+                          
+                      ],
+                    );
+                  },
+                );
               },
             ),
 

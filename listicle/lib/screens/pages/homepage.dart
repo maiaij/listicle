@@ -25,25 +25,28 @@ class _HomePageState extends State<Homepage> {
   @override
   void initState(){
     super.initState();
-    ListItem one = ListItem("book one", "novels", "Ongoing", 10, 5.0, false, "", "so far so good");
-    ListItem two = ListItem("book two", "novels", "Not Started", 2, 0.0, false, "", "just started");
-    ListItem three = ListItem("comic one", "comics", "Dropped", 53, 3.9, false, "", "so far so good");
-    ListItem four = ListItem("comic two", "comics", "BackBurner", 27, 0.0, false, "", "very cute");
-    ListItem five = ListItem("anime one", "anime", "Completed", 24, 4.0, false, "", "spoopy");
+    if(globals.testLists.isEmpty){
+      ListItem one = ListItem("book one", "novels", "Ongoing", 10, 5.0, false, "", "so far so good");
+      ListItem two = ListItem("book two", "novels", "Not Started", 2, 0.0, false, "", "just started");
+      ListItem three = ListItem("comic one", "comics", "Dropped", 53, 3.9, false, "", "so far so good");
+      ListItem four = ListItem("comic two", "comics", "BackBurner", 27, 0.0, false, "", "very cute");
+      ListItem five = ListItem("anime one", "anime", "Completed", 24, 4.0, false, "", "spoopy");
 
-    test1.add(one);
-    test1.add(two);
-    test2.add(three);
-    test2.add(four);
-    test3.add(five);
+      test1.add(one);
+      test1.add(two);
+      test2.add(three);
+      test2.add(four);
+      test3.add(five);
 
-    Lists listOne = Lists(test1, "novels", "novels i love");
-    Lists listTwo = Lists(test2, "comics", "comics i love");
-    Lists listThree = Lists(test3, "anime", "anime i love");
+      Lists listOne = Lists(test1, "novels", "novels i love");
+      Lists listTwo = Lists(test2, "comics", "comics i love");
+      Lists listThree = Lists(test3, "anime", "anime i love");
 
-    globals.testLists.add(listOne);
-    globals.testLists.add(listTwo);
-    globals.testLists.add(listThree);
+      globals.testLists.add(listOne);
+      globals.testLists.add(listTwo);
+      globals.testLists.add(listThree);
+    }
+    
   }
 
   Widget editedListBody(){
@@ -58,6 +61,7 @@ class _HomePageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+    globals.origin = 0;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -105,16 +109,16 @@ class _HomePageState extends State<Homepage> {
           ),
 
           BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: "RECOMMENDED",
+          ),
+
+          BottomNavigationBarItem(
             icon: Icon(Icons.add_circle),
             label: "NEW",
           ),
  
           /** 
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: "FAVOURITES",
-          ),
-
           BottomNavigationBarItem(
             icon: Icon(Icons.circle),
             label: "SETTINGS",
@@ -124,7 +128,15 @@ class _HomePageState extends State<Homepage> {
         ],
 
         onTap:(value) async {
+          if(value == 0){
+            await Navigator.pushNamed(context, '/home');
+          }
+
           if(value == 1){
+            await Navigator.pushNamed(context, '/recommended');
+          }
+
+          if(value == 2){
             await Navigator.pushNamed(context, '/new_list');
             setState(() {
               edited = !edited;

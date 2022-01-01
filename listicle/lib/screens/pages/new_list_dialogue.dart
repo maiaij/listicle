@@ -28,7 +28,7 @@ class _AddNewListState extends State<AddNewList> {
                   globals.testLists.add(newList);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_title.text} added!")));
                 });
-                Navigator.pop(context, "${_title.text} added!");
+                Navigator.pop(context);
               }
             }
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
@@ -193,8 +194,16 @@ class _SelectedItemState extends State<SelectedItem> {
             int changed = globals.testLists[globals.selectedIndex].items.indexOf(globals.activeTabItems[globals.itemIndex]);
             globals.testLists[globals.selectedIndex].items[changed] = globals.activeTabItems[globals.itemIndex];
             
-            Navigator.pop(context);
-            Navigator.popAndPushNamed(context, '/selected_list');
+            if(globals.origin == 0){
+              Navigator.pop(context);
+              Navigator.popAndPushNamed(context, '/selected_list');
+            }
+
+            if(globals.origin == 1){
+              Navigator.pop(context);
+              Navigator.popAndPushNamed(context, '/recommended');
+            }
+            
           },
         ),
         actions: [
@@ -365,6 +374,11 @@ class _SelectedItemState extends State<SelectedItem> {
                       )
                     ],
                   ),
+
+                  Text(
+                    "Updated: ${DateFormat.yMMMd().format(globals.activeTabItems[globals.itemIndex].dateModified)}",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  )
                 
                 ]
               )

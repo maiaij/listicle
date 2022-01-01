@@ -93,6 +93,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
             */
 
             onTap: (){
+              globals.origin = 0;
               globals.itemIndex = index;
               globals.activeTabItems = tabItems;
               Navigator.pushNamed(context, '/selected_item');

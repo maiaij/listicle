@@ -59,6 +59,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                       setState(() {
                         tabItems[index].progress --;
                         tabItems[index].updateDate();
+                        globals.testLists[globals.selectedIndex].updateDate();
                       });
                     }
                   }
@@ -74,6 +75,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                     setState(() {
                       tabItems[index].progress ++;
                       tabItems[index].updateDate();
+                      globals.testLists[globals.selectedIndex].updateDate();
                     });
                   }
                 ),
@@ -302,7 +304,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    String? selectedFilter = 'A to Z';
+    String? selectedFilter = 'Title (Ascending)';
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     tabs = makeTabLists(globals.testLists[globals.selectedIndex].items);
 
@@ -327,10 +329,10 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
               PopupMenuButton(
                 icon: const Icon(Icons.filter_list),
                 itemBuilder: (BuildContext context) => [
-                  const PopupMenuItem(child: Text("A to Z"),value: "A to Z"),
-                  const PopupMenuItem(child: Text("Z to A"),value: "Z to A"),
-                  const PopupMenuItem(child: Text("Newest"),value: "Newest"),
-                  const PopupMenuItem(child: Text("Oldest"),value: "Oldest"),
+                  const PopupMenuItem(child: Text("Title (Ascending)"),value: "Title (Ascending)"),
+                  const PopupMenuItem(child: Text("Title (Descending)"),value: "Title (Descending)"),
+                  const PopupMenuItem(child: Text("Date Modified (Ascending)"),value: "Date Modified (Ascending)"),
+                  const PopupMenuItem(child: Text("Date Modified (Descending)"),value: "Date Modified (Descending)"),
                 ],
 
                 onSelected: (String? newValue) {
@@ -338,22 +340,22 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                     selectedFilter = newValue!;
                     //filter the page
                     switch(selectedFilter){
-                      case 'A to Z':
+                      case 'Title (Ascending)':
                         globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
                         break;
                       
-                      case 'Z to A':
+                      case 'Title (Descending)':
                         globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
                         globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
-                      case 'Newest':
+                      case 'Date Modified (Ascending)':
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                        break;
+                        
+                      case 'Date Modified (Descending)':
                         globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
                         globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
-                        break;
-
-                      case 'Oldest':
-                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
                         break;
 
                     }

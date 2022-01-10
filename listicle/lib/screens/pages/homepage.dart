@@ -45,6 +45,8 @@ class _HomePageState extends State<Homepage> {
       Lists listTwo = Lists(test2, "comics", "comics i love");
       Lists listThree = Lists(test3, "anime", "anime i love");
 
+      listOne.dateCreated = one.dateModified = DateTime(2017,9,7);
+
       globals.testLists.add(listOne);
       globals.testLists.add(listTwo);
       globals.testLists.add(listThree);
@@ -64,14 +66,77 @@ class _HomePageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
+    String? selectedFilter = 'Title (Ascending)';
     globals.origin = 0;
+
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         elevation: 1,
         backgroundColor: Colors.white,
         title: const Text("My Lists", style: TextStyle(color: Colors.black)),
         actions: [
+
+          PopupMenuButton(
+            icon: const Icon(Icons.filter_list_rounded, color: Colors.black,),
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem(child: Text("Title (Ascending)"),value: "Title (Ascending)"),
+              const PopupMenuItem(child: Text("Title (Descending)"),value: "Title (Descending)"),
+              const PopupMenuItem(child: Text("Date Modified (Ascending)"),value: "Date Modified (Ascending)"),
+              const PopupMenuItem(child: Text("Date Modified (Descending)"),value: "Date Modified (Descending)"),
+              const PopupMenuItem(child: Text("Date Created (Ascending)"),value: "Date Created (Ascending)"),
+              const PopupMenuItem(child: Text("Date Created (Descending)"),value: "Date Created (Descending)"),
+            ],
+
+            onSelected: (String? newValue) {
+              setState(() {
+                selectedFilter = newValue!;
+                //filter the page
+                switch(selectedFilter){
+                  case 'Title (Ascending)':
+                    globals.sortType = 0;
+                    globals.testLists.sort((a,b) => a.title.compareTo(b.title));
+                    edited = !edited; 
+                    break;
+                  
+                  case 'Title (Descending)':
+                    globals.sortType = 0;
+                    globals.testLists.sort((a,b) => a.title.compareTo(b.title));
+                    globals.testLists = List.from(globals.testLists.reversed);
+                    edited = !edited;
+                    break;
+
+                  case 'Date Modified (Ascending)':
+                    globals.sortType = 0;
+                    globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                    edited = !edited;
+                    break;
+                    
+                  case 'Date Modified (Descending)':
+                    globals.sortType = 0;
+                    globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                    globals.testLists = List.from(globals.testLists.reversed);
+                    edited = !edited;
+                    break;
+
+                  case 'Date Created (Ascending)':
+                    globals.sortType = 1;
+                    globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                    edited = !edited;
+                    break;
+                    
+                  case 'Date Created (Descending)':
+                    globals.sortType = 1;
+                    globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                    globals.testLists = List.from(globals.testLists.reversed);
+                    edited = !edited;
+                    break;
+
+                }
+              });
+            },
+          ),
+
           IconButton(
             icon: Icon(Icons.view_list_rounded, color: (listView == true)? (Colors.indigo[200]):(Colors.black)),
             onPressed: (){

@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:listicle/globals.dart' as globals;
 
 class Gallery_View extends StatefulWidget {
@@ -59,9 +60,22 @@ class _Gallery_ViewState extends State<Gallery_View> {
 
               Flexible(
                 flex: 0,
-                child: Text(
-                  "${globals.testLists[i].listLen} Items",
-                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                child: Text.rich(
+                  TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "${globals.testLists[i].listLen} Items\n",
+                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                      ),
+
+                      TextSpan(
+                        text: (globals.sortType == 0)? 
+                              ("Updated: ${DateFormat.yMMMd().format(globals.testLists[i].dateModified)}"):
+                              ("Created: ${DateFormat.yMMMd().format(globals.testLists[i].dateCreated)}"),
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ]
+                  )
                 ),
               ),
 

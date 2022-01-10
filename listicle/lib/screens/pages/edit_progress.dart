@@ -26,6 +26,7 @@ class _EditProgressState extends State<EditProgress> {
                 setState(() {
                   globals.activeTabItems[globals.itemIndex].progress = int.parse(_progress.text);
                   globals.activeTabItems[globals.itemIndex].updateDate();
+                  globals.testLists[globals.selectedIndex].updateDate();
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Progress updated!")));
                 });
 

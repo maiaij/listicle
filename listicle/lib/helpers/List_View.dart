@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:listicle/globals.dart' as globals;
 
 // MAKE NOT STATEFUL
@@ -29,10 +30,24 @@ class _List_ViewState extends State<List_View> {
             style: const TextStyle(fontSize: 16, color: Colors.black),
           ),
 
-          subtitle: Text(
-            "${globals.testLists[index].listLen} Items",
-            style: const TextStyle(fontSize: 12, color: Colors.black),
+          subtitle: Text.rich(
+            TextSpan(
+              children: <TextSpan>[
+                TextSpan(
+                  text: "${globals.testLists[index].listLen} Items\n",
+                  style: const TextStyle(fontSize: 12, color: Colors.black),
+                ),
+
+                TextSpan(
+                  text: (globals.sortType == 0)? 
+                        ("Updated: ${DateFormat.yMMMd().format(globals.testLists[index].dateModified)}"):
+                        ("Created: ${DateFormat.yMMMd().format(globals.testLists[index].dateCreated)}"),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ]
+            )
           ),
+          
 
           onTap: () async{
             globals.selectedIndex = index;

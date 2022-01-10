@@ -71,7 +71,7 @@ class _HomePageState extends State<Homepage> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
         elevation: 1,
         backgroundColor: Colors.white,
         title: const Text("My Lists", style: TextStyle(color: Colors.black)),

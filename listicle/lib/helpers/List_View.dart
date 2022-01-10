@@ -23,8 +23,18 @@ class _List_ViewState extends State<List_View> {
     itemCount: globals.testLists.length,
     itemBuilder: (BuildContext context, int index){
       return Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
         child: ListTile(
+          /**leading: Container(
+            width: 60,
+            height: 60,
+            alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+              color: Colors.indigo[100],
+              borderRadius: BorderRadius.circular(3),
+            )
+          ),
+          */
           title: Text(
             globals.testLists[index].title,
             style: const TextStyle(fontSize: 16, color: Colors.black),

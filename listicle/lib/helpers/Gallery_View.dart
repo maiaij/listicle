@@ -95,7 +95,7 @@ class _Gallery_ViewState extends State<Gallery_View> {
       crossAxisCount: 2,
       crossAxisSpacing: 15,
       mainAxisSpacing: 15,
-      padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
+      padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
       children: makeItemContainers(context),
     );
     

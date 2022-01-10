@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
+
 import 'ListItem.dart';
 
 class Lists{
+  Image? cover;
   DateTime dateCreated = DateTime.now();
   DateTime dateModified = DateTime.now();
   List<ListItem> items = [];

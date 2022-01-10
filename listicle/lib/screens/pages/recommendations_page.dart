@@ -43,8 +43,8 @@ class _RecommendedListState extends State<RecommendedList> {
         currentIndex: 1,
         selectedItemColor: Colors.indigo[200],
         unselectedItemColor: Colors.black,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
         showUnselectedLabels: true,
         backgroundColor: Colors.white,
 
@@ -64,22 +64,16 @@ class _RecommendedListState extends State<RecommendedList> {
             label: "NEW",
           ),
  
-          /** 
           BottomNavigationBarItem(
-            icon: Icon(Icons.circle),
+            icon: Icon(Icons.keyboard_control_rounded),
             label: "SETTINGS",
           ),
-          */
           
         ],
 
         onTap:(value) async {
           if(value == 0){
             await Navigator.pushNamed(context, '/home');
-          }
-
-          if(value == 1){
-            await Navigator.pushNamed(context, '/recommended');
           }
 
           if(value == 2){

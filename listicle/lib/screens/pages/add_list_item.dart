@@ -70,7 +70,7 @@ class _AddListItemState extends State<AddListItem> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
-                  maxLength: 20,
+                  //maxLength: 20,
                   controller: _title,
                   decoration:  const InputDecoration(labelText: "Title"),
                   validator: (value){

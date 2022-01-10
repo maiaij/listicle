@@ -27,10 +27,13 @@ class _HomePageState extends State<Homepage> {
     super.initState();
     if(globals.testLists.isEmpty){
       ListItem one = ListItem("book one", "novels", "Ongoing", 10, 5.0, false, "", "so far so good");
-      ListItem two = ListItem("book two", "novels", "Not Started", 2, 0.0, false, "", "just started");
+      ListItem two = ListItem("book two", "novels", "Ongoing", 2, 0.0, false, "", "just started");
       ListItem three = ListItem("comic one", "comics", "Dropped", 53, 3.9, false, "", "so far so good");
       ListItem four = ListItem("comic two", "comics", "BackBurner", 27, 0.0, false, "", "very cute");
       ListItem five = ListItem("anime one", "anime", "Completed", 24, 4.0, false, "", "spoopy");
+
+      one.dateModified = DateTime(2017,9,7);
+      two.dateModified = DateTime(2019,12,17);
 
       test1.add(one);
       test1.add(two);

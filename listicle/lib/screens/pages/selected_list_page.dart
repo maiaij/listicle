@@ -22,6 +22,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
+    globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
     controller = TabController(
       length: 5,
       vsync: this
@@ -342,15 +343,17 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                         break;
                       
                       case 'Z to A':
-                        // sort
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+                        globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
                       case 'Newest':
-                        // sort
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                        globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
                       case 'Oldest':
-                        // sort
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
                         break;
 
                     }

@@ -30,9 +30,9 @@ class _EditListDescState extends State<EditListDesc> {
                 });
                 
                 Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/selected_list');
+                //Navigator.pop(context);
+                //Navigator.pop(context);
+                Navigator.popAndPushNamed(context, '/selected_list');
               }
             }
           ),

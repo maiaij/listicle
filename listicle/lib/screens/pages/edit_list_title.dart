@@ -32,7 +32,7 @@ class _EditListTitleState extends State<EditListTitle> {
                 });
 
                 Navigator.pop(context);
-                Navigator.pop(context);
+                //Navigator.pop(context);
                 Navigator.popAndPushNamed(context, '/selected_list');
               }
             }

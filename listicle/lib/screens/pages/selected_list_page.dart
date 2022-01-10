@@ -213,13 +213,8 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
     );
   }
 
-
-  @override
-  Widget build(BuildContext context) {
-    tabs = makeTabLists(globals.testLists[globals.selectedIndex].items);
-
-    return Scaffold(
-      endDrawer: SizedBox(
+  Widget makeEndDrawer(){
+    return SizedBox(
         width: 200,
         child: Drawer(
           elevation: 0,
@@ -228,8 +223,8 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
               _drawerHeader,
               ListTile(
                 title: const Text('Add Item', style: TextStyle(fontSize: 12)),
-                onTap: () async{
-                  await Navigator.pushNamed(context, '/add_list_item');
+                onTap: () {
+                  Navigator.pushNamed(context, '/add_list_item');
                 },
               ),
 
@@ -241,15 +236,15 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
               ListTile(
                 title: const Text('Edit List Title', style: TextStyle(fontSize: 12)),
-                onTap: () async{
-                  await Navigator.pushNamed(context, '/edit_list_title');
+                onTap: () {
+                  Navigator.pushNamed(context, '/edit_list_title');
                 },
               ),
               
               ListTile(
                 title: const Text('Edit List Description', style: TextStyle(fontSize: 12)),
-                onTap: () async{
-                  await Navigator.pushNamed(context, '/edit_list_description');
+                onTap: () {
+                  Navigator.pushNamed(context, '/edit_list_description');
                 },
               ),
 
@@ -301,20 +296,73 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
             ]
           )
         )
-      ),
+      );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String? selectedFilter = 'A to Z';
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
+    tabs = makeTabLists(globals.testLists[globals.selectedIndex].items);
+
+    return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: makeEndDrawer(),
 
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(
-            leading: BackButton(),
+          SliverAppBar(
+            leading: const BackButton(),
             automaticallyImplyLeading: true,
             //pinned: true,
-            iconTheme: IconThemeData(color: Colors.black),
+            iconTheme: const IconThemeData(color: Colors.black),
             elevation: 0,
             backgroundColor: Colors.white,
             snap: true,
             floating: true,
             toolbarHeight: 50,
+            actions: [
+
+              PopupMenuButton(
+                icon: const Icon(Icons.filter_list),
+                itemBuilder: (BuildContext context) => [
+                  const PopupMenuItem(child: Text("A to Z"),value: "A to Z"),
+                  const PopupMenuItem(child: Text("Z to A"),value: "Z to A"),
+                  const PopupMenuItem(child: Text("Newest"),value: "Newest"),
+                  const PopupMenuItem(child: Text("Oldest"),value: "Oldest"),
+                ],
+
+                onSelected: (String? newValue) {
+                  setState(() {
+                    selectedFilter = newValue!;
+                    //filter the page
+                    switch(selectedFilter){
+                      case 'A to Z':
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+                        break;
+                      
+                      case 'Z to A':
+                        // sort
+                        break;
+
+                      case 'Newest':
+                        // sort
+                        break;
+
+                      case 'Oldest':
+                        // sort
+                        break;
+
+                    }
+                  });
+                },
+              ),
+
+              IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: (){_scaffoldKey.currentState!.openEndDrawer();},
+              ),
+            ],
           ),
 
           SliverPersistentHeader(

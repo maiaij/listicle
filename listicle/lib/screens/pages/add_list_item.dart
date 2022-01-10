@@ -51,9 +51,9 @@ class _AddListItemState extends State<AddListItem> {
                 });
                 
                 Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/selected_list');
+                //Navigator.pop(context);
+                //Navigator.pop(context);
+                Navigator.popAndPushNamed(context, '/selected_list');
               }
             }
           ),
@@ -70,6 +70,7 @@ class _AddListItemState extends State<AddListItem> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
+                  maxLength: 20,
                   controller: _title,
                   decoration:  const InputDecoration(labelText: "Title"),
                   validator: (value){

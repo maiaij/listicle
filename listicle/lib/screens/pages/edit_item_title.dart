@@ -48,7 +48,7 @@ class _EditItemTitleState extends State<EditItemTitle> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                 child: TextFormField(
                   //20
-                  maxLength: 100,
+                  //maxLength: 100,
                   controller: _title,
                   decoration:  const InputDecoration(labelText: "Update Title"),
                   validator: (value){

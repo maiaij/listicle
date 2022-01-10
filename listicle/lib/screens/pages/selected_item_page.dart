@@ -110,6 +110,7 @@ class _SelectedItemState extends State<SelectedItem> {
               },
             ),
 
+            // remove link
             ListTile(
               title: const Text('Remove Link', style: TextStyle(fontSize: 12)),
               onTap: () {
@@ -162,6 +163,7 @@ class _SelectedItemState extends State<SelectedItem> {
               endIndent: 15,
             ),
 
+            // move item
             ListTile(
               title: const Text('Move Item', style: TextStyle(fontSize: 12)),
               onTap: () {
@@ -171,7 +173,7 @@ class _SelectedItemState extends State<SelectedItem> {
                 // remove item from current list
                 // redirect to new list
                 showDialog<void>(
-                  barrierDismissible: true, // false if user must tap button!
+                  barrierDismissible: false, // false if user must tap button!
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
@@ -182,6 +184,12 @@ class _SelectedItemState extends State<SelectedItem> {
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButtonFormField(
+                            validator: (value) {
+                              if(value == null){
+                                return 'Please select a destination list';
+                              }
+                              return null;
+                            },
                             decoration: const InputDecoration(labelText: "List Options"),
                             value: selectedDestination,
                             onChanged: (String? newValue) {
@@ -216,26 +224,30 @@ class _SelectedItemState extends State<SelectedItem> {
                               backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 148, 159, 226)),
                             ),
                             onPressed: () {
-                              setState(() {
-                                List<String> listTitles = [];
-                                for(int i = 0; i < globals.testLists.length;i++){
-                                  listTitles.add(globals.testLists[i].title);
-                                }
-                                
-                                // add
-                                int destIndex = listTitles.indexOf(_destination);
-                                globals.testLists[destIndex].items.add(globals.activeTabItems[globals.itemIndex]);
-                                globals.testLists[destIndex].updateListLen();
+                              if(_destination.isNotEmpty){
+                                setState(() {
+                                  List<String> listTitles = [];
+                                  for(int i = 0; i < globals.testLists.length;i++){
+                                    listTitles.add(globals.testLists[i].title);
+                                  }
+                                  
+                                  // add
+                                  int destIndex = listTitles.indexOf(_destination);
+                                  globals.activeTabItems[globals.itemIndex].listName = globals.testLists[destIndex].title;
+                                  globals.testLists[destIndex].items.add(globals.activeTabItems[globals.itemIndex]);
+                                  globals.testLists[destIndex].updateListLen();
 
-                                // remove
-                                int changed = globals.testLists[globals.selectedIndex].items.indexOf(globals.activeTabItems[globals.itemIndex]);
-                                globals.testLists[globals.selectedIndex].items.removeAt(changed);
-                                globals.testLists[globals.selectedIndex].updateListLen();
+                                  // remove
+                                  int changed = globals.testLists[globals.selectedIndex].items.indexOf(globals.activeTabItems[globals.itemIndex]);
+                                  globals.testLists[globals.selectedIndex].items.removeAt(changed);
+                                  globals.testLists[globals.selectedIndex].updateListLen();
 
-                                Navigator.of(context).pop();
-                                Navigator.pop(context);
-                                Navigator.popAndPushNamed(context, '/selected_list');
-                              });
+                                  Navigator.of(context).pop();
+                                  Navigator.pop(context);
+                                  Navigator.popAndPushNamed(context, '/selected_list');
+                                });
+                              }
+                              
                             },
                           ),
                           ],

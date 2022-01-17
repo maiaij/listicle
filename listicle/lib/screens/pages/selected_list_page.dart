@@ -317,7 +317,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
           SliverAppBar(
             leading: const BackButton(),
             automaticallyImplyLeading: true,
-            //pinned: true,
+            pinned: true,
             iconTheme: const IconThemeData(color: Colors.black),
             elevation: 0,
             backgroundColor: Colors.white,
@@ -327,6 +327,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
             actions: [
               IconButton(
                 icon: const Icon(Icons.search_outlined),
+                tooltip: 'Search',
                 onPressed: (){
                   showSearch(context: context, delegate: ItemSearch());
                 }, 
@@ -334,6 +335,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
               PopupMenuButton(
                 icon: const Icon(Icons.filter_list),
+                tooltip: 'Sort',
                 itemBuilder: (BuildContext context) => [
                   const PopupMenuItem(child: Text("Title (Ascending)"),value: "Title (Ascending)"),
                   const PopupMenuItem(child: Text("Title (Descending)"),value: "Title (Descending)"),
@@ -371,6 +373,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
               IconButton(
                 icon: const Icon(Icons.menu),
+                tooltip: 'Edit Options',
                 onPressed: (){_scaffoldKey.currentState!.openEndDrawer();},
               ),
             ],

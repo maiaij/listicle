@@ -193,13 +193,13 @@ class _HomePageState extends State<Homepage> {
             label: "NEW",
           ),
  
-          
+          /** 
           BottomNavigationBarItem(
             icon: Icon(Icons.keyboard_control_rounded),
             tooltip: "Settings",
             label: "SETTINGS",
           ),
-          
+          */
           
         ],
 

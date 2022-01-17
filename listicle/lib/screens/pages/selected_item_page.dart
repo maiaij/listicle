@@ -362,6 +362,12 @@ class _SelectedItemState extends State<SelectedItem> {
               Navigator.pop(context);
               Navigator.popAndPushNamed(context, '/recommended');
             }
+
+            if(globals.origin == 2){
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.popAndPushNamed(context, '/selected_list');
+            }
             
           },
         ),

@@ -64,10 +64,13 @@ class _RecommendedListState extends State<RecommendedList> {
             label: "NEW",
           ),
  
+          /** 
           BottomNavigationBarItem(
             icon: Icon(Icons.keyboard_control_rounded),
+            tooltip: "Settings",
             label: "SETTINGS",
           ),
+          */
           
         ],
 

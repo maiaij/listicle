@@ -325,6 +325,12 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
             floating: true,
             toolbarHeight: 50,
             actions: [
+              IconButton(
+                icon: const Icon(Icons.search_outlined),
+                onPressed: (){
+                  showSearch(context: context, delegate: ItemSearch());
+                }, 
+              ),
 
               PopupMenuButton(
                 icon: const Icon(Icons.filter_list),
@@ -397,8 +403,6 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
   }
 }
 
-
-
 class CustomHeader extends SliverPersistentHeaderDelegate {
   final TabBar bottom;
   final Widget top;
@@ -429,4 +433,76 @@ class CustomHeader extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
+}
+
+class ItemSearch extends SearchDelegate<String>{
+
+  final titles = globals.testLists[globals.selectedIndex].items.map((e) => e.title).toList();
+  final recentTitles = [];
+  //List<String> recentTitles = ['book one'];
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    // actions for app bar
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: (){
+          query = '';
+        }, 
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    // leading icon on the left of app bar
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: (){
+        close(context, '');
+      }, 
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // show a result based on selection
+    return buildSuggestions(context);
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // show when someone searches for something
+    final suggestionList = query.isEmpty ? recentTitles : titles.where((t) => t.startsWith(RegExp(query, caseSensitive: false))).toList();
+    return ListView.builder(
+      itemBuilder: (context, index) => ListTile(
+        onTap: (){
+          globals.origin = 2;
+            globals.itemIndex = index;
+            globals.activeTabItems = globals.testLists[globals.selectedIndex].items;
+            Navigator.pushNamed(context, '/selected_item');
+        },
+        
+        title: RichText(
+          text: TextSpan(
+            text: suggestionList[index].substring(0, query.characters.length), //query.length
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+
+            children: [
+              TextSpan(
+                text: suggestionList[index].substring(query.characters.length), //query.length
+                style: const TextStyle(color: Colors.grey),  
+              )
+            ],
+          ),
+        ),
+      ),
+
+      itemCount: suggestionList.length,
+    );
+  }
 }

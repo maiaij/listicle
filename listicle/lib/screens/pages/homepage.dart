@@ -5,6 +5,7 @@ import 'package:listicle/globals.dart' as globals;
 import 'package:listicle/helpers/List_View.dart';
 import 'package:listicle/helpers/Gallery_View.dart';
 import 'package:listicle/models/CustomUser.dart';
+import 'package:listicle/screens/services/auth.dart';
 
 // homepage
 
@@ -16,6 +17,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomePageState extends State<Homepage> {
+  final AuthService _auth = AuthService();
   List<ListItem> test1 = [];
   List<ListItem> test2 = [];
   List<ListItem> test3 = [];
@@ -66,7 +68,7 @@ class _HomePageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    String? selectedFilter = 'Title (Ascending)';
+    String? selectedFilter = 'Title (Ascending)', selectedOption = 'Logout';
     globals.origin = 0;
 
     return Scaffold(
@@ -74,7 +76,72 @@ class _HomePageState extends State<Homepage> {
         automaticallyImplyLeading: false,
         elevation: 1,
         backgroundColor: Colors.white,
-        title: const Text("My Lists", style: TextStyle(color: Colors.black)),
+        title: Row(
+          children: [
+            const Text("My Lists", style: TextStyle(color: Colors.black)),
+            PopupMenuButton(
+              tooltip: "Sort Lists",
+              icon: const Icon(Icons.arrow_drop_down_rounded, color: Colors.black,),
+              itemBuilder: (BuildContext context) => [
+                const PopupMenuItem(child: Text("Title (Ascending)"),value: "Title (Ascending)"),
+                const PopupMenuItem(child: Text("Title (Descending)"),value: "Title (Descending)"),
+                const PopupMenuItem(child: Text("Date Modified (Ascending)"),value: "Date Modified (Ascending)"),
+                const PopupMenuItem(child: Text("Date Modified (Descending)"),value: "Date Modified (Descending)"),
+                const PopupMenuItem(child: Text("Date Created (Ascending)"),value: "Date Created (Ascending)"),
+                const PopupMenuItem(child: Text("Date Created (Descending)"),value: "Date Created (Descending)"),
+              ],
+
+              onSelected: (String? newValue) {
+                setState(() {
+                  selectedFilter = newValue!;
+                  //filter the page
+                  switch(selectedFilter){
+                    case 'Title (Ascending)':
+                      globals.sortType = 0;
+                      globals.testLists.sort((a,b) => a.title.compareTo(b.title));
+                      edited = !edited; 
+                      break;
+                    
+                    case 'Title (Descending)':
+                      globals.sortType = 0;
+                      globals.testLists.sort((a,b) => a.title.compareTo(b.title));
+                      globals.testLists = List.from(globals.testLists.reversed);
+                      edited = !edited;
+                      break;
+
+                    case 'Date Modified (Ascending)':
+                      globals.sortType = 0;
+                      globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                      edited = !edited;
+                      break;
+                      
+                    case 'Date Modified (Descending)':
+                      globals.sortType = 0;
+                      globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                      globals.testLists = List.from(globals.testLists.reversed);
+                      edited = !edited;
+                      break;
+
+                    case 'Date Created (Ascending)':
+                      globals.sortType = 1;
+                      globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                      edited = !edited;
+                      break;
+                      
+                    case 'Date Created (Descending)':
+                      globals.sortType = 1;
+                      globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                      globals.testLists = List.from(globals.testLists.reversed);
+                      edited = !edited;
+                      break;
+
+                  }
+                });
+              },
+            ),
+          ],
+        ), 
+        
         actions: [
           IconButton(
             icon: Icon(Icons.view_list_rounded, color: (listView == true)? (Colors.indigo[200]):(Colors.black)),
@@ -97,63 +164,22 @@ class _HomePageState extends State<Homepage> {
           ),
 
           PopupMenuButton(
-            tooltip: "Sort Lists",
+            tooltip: "More Options",
             icon: const Icon(Icons.more_vert_rounded, color: Colors.black,),
             itemBuilder: (BuildContext context) => [
-              const PopupMenuItem(child: Text("Title (Ascending)"),value: "Title (Ascending)"),
-              const PopupMenuItem(child: Text("Title (Descending)"),value: "Title (Descending)"),
-              const PopupMenuItem(child: Text("Date Modified (Ascending)"),value: "Date Modified (Ascending)"),
-              const PopupMenuItem(child: Text("Date Modified (Descending)"),value: "Date Modified (Descending)"),
-              const PopupMenuItem(child: Text("Date Created (Ascending)"),value: "Date Created (Ascending)"),
-              const PopupMenuItem(child: Text("Date Created (Descending)"),value: "Date Created (Descending)"),
+              const PopupMenuItem(child: Text("Logout"),value: "Logout"),
             ],
 
-            onSelected: (String? newValue) {
-              setState(() {
-                selectedFilter = newValue!;
-                //filter the page
-                switch(selectedFilter){
-                  case 'Title (Ascending)':
-                    globals.sortType = 0;
-                    globals.testLists.sort((a,b) => a.title.compareTo(b.title));
-                    edited = !edited; 
-                    break;
-                  
-                  case 'Title (Descending)':
-                    globals.sortType = 0;
-                    globals.testLists.sort((a,b) => a.title.compareTo(b.title));
-                    globals.testLists = List.from(globals.testLists.reversed);
-                    edited = !edited;
-                    break;
-
-                  case 'Date Modified (Ascending)':
-                    globals.sortType = 0;
-                    globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
-                    edited = !edited;
-                    break;
-                    
-                  case 'Date Modified (Descending)':
-                    globals.sortType = 0;
-                    globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
-                    globals.testLists = List.from(globals.testLists.reversed);
-                    edited = !edited;
-                    break;
-
-                  case 'Date Created (Ascending)':
-                    globals.sortType = 1;
-                    globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
-                    edited = !edited;
-                    break;
-                    
-                  case 'Date Created (Descending)':
-                    globals.sortType = 1;
-                    globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
-                    globals.testLists = List.from(globals.testLists.reversed);
-                    edited = !edited;
-                    break;
-
-                }
-              });
+            onSelected: (String? newValue) async {
+              selectedOption = newValue!;
+              
+              switch(selectedOption){
+                case 'Logout':
+                  await _auth.signOut();
+                  Navigator.pop(context);
+                  Navigator.popAndPushNamed(context, '/wrapper');
+                  break;
+              }
             },
           ),
             
@@ -205,7 +231,7 @@ class _HomePageState extends State<Homepage> {
 
         onTap:(value) async {
           if(value == 1){
-            await Navigator.pushNamed(context, '/recommended');
+            await Navigator.popAndPushNamed(context, '/recommended');
           }
 
           if(value == 2){

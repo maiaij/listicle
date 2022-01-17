@@ -42,9 +42,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.indigo,
         ),
         home: const Splash(),
+        //home: Wrapper(),
         routes: {
           '/login_screen': (context) => LoginPage(),
-          '/wrapper': (context) => Wrapper(),
+          '/wrapper': (context) => const Wrapper(),
           '/home': (context) => const Homepage(),
           '/recommended': (context) => const RecommendedList(),
           '/selected_list': (context) => const SelectedList(),

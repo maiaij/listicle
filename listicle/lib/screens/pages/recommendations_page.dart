@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/screens/services/auth.dart';
 import 'package:listicle/models/CustomUser.dart';
 
 class RecommendedList extends StatefulWidget {
@@ -13,9 +14,11 @@ class RecommendedList extends StatefulWidget {
 }
 
 class _RecommendedListState extends State<RecommendedList> {
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
+    String? selectedOption = 'Logout';
     Map<int, String> listIndexes = {};
     List<ListItem> recs = [];
   
@@ -37,6 +40,27 @@ class _RecommendedListState extends State<RecommendedList> {
         elevation: 1,
         backgroundColor: Colors.white,
         title: const Text("My Recommendations", style: TextStyle(color: Colors.black)),
+        actions: [
+          PopupMenuButton(
+            tooltip: "More Options",
+            icon: const Icon(Icons.more_vert_rounded, color: Colors.black,),
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem(child: Text("Logout"),value: "Logout"),
+            ],
+
+            onSelected: (String? newValue) async {
+              selectedOption = newValue!;
+              
+              switch(selectedOption){
+                case 'Logout':
+                  await _auth.signOut();
+                  Navigator.pop(context);
+                  Navigator.popAndPushNamed(context, '/wrapper');
+                  break;
+              }
+            },
+          ),
+        ]
       ),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -76,7 +100,7 @@ class _RecommendedListState extends State<RecommendedList> {
 
         onTap:(value) async {
           if(value == 0){
-            await Navigator.pushNamed(context, '/home');
+            await Navigator.popAndPushNamed(context, '/home');
           }
 
           if(value == 2){

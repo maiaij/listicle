@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ref lab 7, exercise 6
 
 class SignIn extends StatelessWidget{
+  const SignIn({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

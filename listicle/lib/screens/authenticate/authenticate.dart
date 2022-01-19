@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/screens/authenticate/sign_in.dart';
-import 'package:listicle/screens/pages/homepage.dart';
+import 'package:listicle/screens/authenticate/register.dart';
 
 class Authenticate extends StatefulWidget{
   @override
@@ -8,11 +8,18 @@ class Authenticate extends StatefulWidget{
 }
 
 class _AuthenticateState extends State<Authenticate>{
+
+  bool showSignIn = true;
+  void toggleForm(){
+    setState(() => showSignIn = !showSignIn);
+  }
+
   @override
   Widget build(BuildContext context){
-    return Container(
-      child: const SignIn(),
-      //child: const Homepage(),
-    );
+      if(showSignIn){
+        return SignIn(toggleForm: toggleForm);
+      } else {
+        return Register(toggleForm: toggleForm);
+      }
   }
 }

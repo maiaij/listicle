@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/screens/services/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
-// ref lab 7, exercise 6
-
-class SignIn extends StatelessWidget{
+class Register extends StatelessWidget {
   final Function toggleForm;
-  const SignIn({required this.toggleForm, Key? key}) : super(key: key);
+  const Register({required this.toggleForm, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +79,13 @@ class _FormWidgetState extends State<FormWidget> {
               const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
       
               ElevatedButton(
-                child: const Text("Login"),
+                child: const Text("Sign Up"),
                 onPressed: () async{
                   if(_formKey.currentState!.validate()){
-                    dynamic result = await _auth.signInWithEmailAndPassword(_email!, _password!);
+                    dynamic result = await _auth.registerWithEmailAndPassword(_email!, _password!);
                     if(result == null){
                       setState(() {
-                        error = 'Invalid email and/or password';
+                        error = 'Please provide a valid email and password';
                       });
                     }
                   }
@@ -103,7 +100,7 @@ class _FormWidgetState extends State<FormWidget> {
       
               TextButton(
                 child: const Text(
-                  '\nNeed an account? Sign up',
+                  '\nAlready have an account? Login',
                   style: TextStyle(fontSize: 12, color: Colors.indigo),
                 ),
       

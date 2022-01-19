@@ -176,7 +176,6 @@ class _HomePageState extends State<Homepage> {
               switch(selectedOption){
                 case 'Logout':
                   await _auth.signOut();
-                  Navigator.pop(context);
                   Navigator.popAndPushNamed(context, '/wrapper');
                   break;
               }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:listicle/screens/services/auth.dart';
+import 'package:listicle/services/auth.dart';
+
+import '../../shared/loading.dart';
 
 class Register extends StatelessWidget {
   final Function toggleForm;
@@ -23,6 +25,7 @@ class FormWidget extends StatefulWidget{
 
 class _FormWidgetState extends State<FormWidget> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool loading = false;
   String? _email = '';
   String? _password = '';
   String error = '';
@@ -31,8 +34,7 @@ class _FormWidgetState extends State<FormWidget> {
   
   @override
   Widget build(BuildContext context){
-    return Scaffold(
-      
+    return loading ? Loading() : Scaffold(
       body: Container(
         padding: const EdgeInsets.all(40.0),
         child: Form(
@@ -82,10 +84,12 @@ class _FormWidgetState extends State<FormWidget> {
                 child: const Text("Sign Up"),
                 onPressed: () async{
                   if(_formKey.currentState!.validate()){
+                    setState(() => loading = true);
                     dynamic result = await _auth.registerWithEmailAndPassword(_email!, _password!);
                     if(result == null){
                       setState(() {
                         error = 'Please provide a valid email and password';
+                        loading = false;
                       });
                     }
                   }

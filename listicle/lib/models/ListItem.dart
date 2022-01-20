@@ -14,4 +14,28 @@ class ListItem{
     dateModified = DateTime.now();
   }
 
+  // Maps ListItem to Json
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'listName': listName,
+      'status': status,
+      'progress': progress,
+      'rating': rating,
+      'recommend': recommend,
+      'link': link,
+      'notes': notes,
+      'dateModified': dateModified.toString(),
+    };
+  }
+
+  // Maps Json to ListItem
+  factory ListItem.fromJson(Map<String, dynamic> json) {
+    ListItem item = ListItem(json['title'], json['listName'], json['status'], json['progress'], json['rating'], 
+                    json['recommend'], json['link'], json['notes']);
+
+    item.dateModified = DateTime.parse(json['dateModified']);
+    return item;
+  }
+
 }

@@ -5,7 +5,7 @@ import 'package:listicle/globals.dart' as globals;
 import 'package:listicle/helpers/List_View.dart';
 import 'package:listicle/helpers/Gallery_View.dart';
 import 'package:listicle/models/CustomUser.dart';
-import 'package:listicle/screens/services/auth.dart';
+import 'package:listicle/services/auth.dart';
 
 // homepage
 

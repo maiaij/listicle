@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:listicle/globals.dart' as globals;
-import 'package:listicle/screens/services/auth.dart';
+import 'package:listicle/services/auth.dart';
 import 'package:listicle/models/CustomUser.dart';
 
 class RecommendedList extends StatefulWidget {

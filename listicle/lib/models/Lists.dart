@@ -34,7 +34,7 @@ class Lists{
       'description': description,
       'dateCreated': dateCreated.toString(),
       'dateModified': dateModified.toString(),
-      'listLen': listLen,
+      'listLen': '$listLen',
     };
   }
 
@@ -46,7 +46,7 @@ class Lists{
 
     Lists list = Lists(itemList, json['title'], json['description']);
 
-    list.listLen = json['listLen'];
+    list.listLen = int.parse(json['listLen']);
     list.dateCreated = DateTime.parse(json['dateCreated']);
     list.dateModified = DateTime.parse(json['dateModified']);
 

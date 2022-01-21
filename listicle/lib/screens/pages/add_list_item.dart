@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:listicle/screens/pages/selected_list_page.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/services/db_service.dart';
 
 class AddListItem extends StatefulWidget {
   const AddListItem({ Key? key }) : super(key: key);
@@ -13,6 +16,7 @@ class AddListItem extends StatefulWidget {
 }
 
 class _AddListItemState extends State<AddListItem> {
+  
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _title = TextEditingController();
   final TextEditingController _progress = TextEditingController();
@@ -24,7 +28,7 @@ class _AddListItemState extends State<AddListItem> {
 
   double _rating = 0;
 
-  bool _recommend = false;
+  bool _recommend = false, loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +42,28 @@ class _AddListItemState extends State<AddListItem> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  if(recommendString == 'Yes'){
-                    _recommend = true;
+                  final DBService dbService = DBService();
+                  CustomUser user = CustomUser(uid: '', lists: []);
+                  var currentUser = FirebaseAuth.instance.currentUser;
+
+                  if (currentUser != null) {
+                    dbService.getUserData(uid: currentUser.uid).then((value) {
+                      user = CustomUser.fromJson(value);
+                      if(recommendString == 'Yes'){
+                        _recommend = true;
+                      }
+
+                      ListItem newItem = ListItem(_title.text, user.lists[globals.selectedIndex].title, 
+                                                  _status, int.parse(_progress.text), _rating,
+                                                  _recommend, _link.text, _notes.text);
+                      user.lists[globals.selectedIndex].items.add(newItem);
+                      user.lists[globals.selectedIndex].updateListLen();
+
+                      CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
+                      dbService.addUser(user: temp);
+                    });
+                      
                   }
-                  ListItem newItem = ListItem(_title.text, globals.testLists[globals.selectedIndex].title, 
-                                              _status, int.parse(_progress.text), _rating,
-                                               _recommend, _link.text, _notes.text);
-                  globals.testLists[globals.selectedIndex].items.add(newItem);
-                  globals.testLists[globals.selectedIndex].updateListLen();
                   
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_title.text} added!")));
                 });

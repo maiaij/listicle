@@ -3,8 +3,7 @@ import 'package:listicle/models/CustomUser.dart';
 
 class DBService{
 
-  final String uid;
-  DBService({required this.uid});
+  //DBService();
 
   // collection reference
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -24,9 +23,7 @@ class DBService{
     return snapshot.data();
   }
 
-  Stream<QuerySnapshot> getUserTripSnapshot({required String uid}) {
-    //DocumentSnapshot snapshot = await userData.doc(uid).get();
-    //return snapshot.data();
+  Stream<QuerySnapshot> getUserListsSnapshot({required String uid}) {
     return listsCollection.where('uid', isEqualTo: uid).snapshots();
   }
   

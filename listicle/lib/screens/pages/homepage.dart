@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
@@ -6,6 +7,8 @@ import 'package:listicle/helpers/List_View.dart';
 import 'package:listicle/helpers/Gallery_View.dart';
 import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/services/auth.dart';
+import 'package:listicle/services/db_service.dart';
+import 'package:listicle/shared/loading.dart';
 
 // homepage
 
@@ -18,15 +21,30 @@ class Homepage extends StatefulWidget {
 
 class _HomePageState extends State<Homepage> {
   final AuthService _auth = AuthService();
+  final DBService dbService = DBService();
+
+  CustomUser user = CustomUser(uid: '', lists: []);
+  var currentUser = FirebaseAuth.instance.currentUser;
+
   List<ListItem> test1 = [];
   List<ListItem> test2 = [];
   List<ListItem> test3 = [];
 
-  bool listView = true, edited = false;
+  bool listView = true, edited = false, loading = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
+    if (currentUser != null) {
+      //setState(() => loading = true);
+      dbService.getUserData(uid: currentUser!.uid).then((value) {
+        setState(() {
+          user = CustomUser.fromJson(value);
+          loading = false;
+        });
+        
+      });
+    }
     if(globals.testLists.isEmpty){
       ListItem one = ListItem("book one", "novels", "Ongoing", 10, 5.0, false, "", "so far so good");
       ListItem two = ListItem("book two", "novels", "Ongoing", 2, 0.0, false, "", "just started");
@@ -98,40 +116,49 @@ class _HomePageState extends State<Homepage> {
                   switch(selectedFilter){
                     case 'Title (Ascending)':
                       globals.sortType = 0;
-                      globals.testLists.sort((a,b) => a.title.compareTo(b.title));
+                      user.lists.sort((a,b) => a.title.compareTo(b.title));
+                      //globals.testLists.sort((a,b) => a.title.compareTo(b.title));
                       edited = !edited; 
                       break;
                     
                     case 'Title (Descending)':
                       globals.sortType = 0;
-                      globals.testLists.sort((a,b) => a.title.compareTo(b.title));
-                      globals.testLists = List.from(globals.testLists.reversed);
+                      user.lists.sort((a,b) => a.title.compareTo(b.title));
+                      user.lists = List.from(user.lists.reversed);
+                      //globals.testLists.sort((a,b) => a.title.compareTo(b.title));
+                      //globals.testLists = List.from(globals.testLists.reversed);
                       edited = !edited;
                       break;
 
                     case 'Date Modified (Ascending)':
                       globals.sortType = 0;
-                      globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                      user.lists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                      //globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
                       edited = !edited;
                       break;
                       
                     case 'Date Modified (Descending)':
                       globals.sortType = 0;
-                      globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
-                      globals.testLists = List.from(globals.testLists.reversed);
+                      user.lists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                      user.lists = List.from(user.lists.reversed);
+                      //globals.testLists.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                      //globals.testLists = List.from(globals.testLists.reversed);
                       edited = !edited;
                       break;
 
                     case 'Date Created (Ascending)':
                       globals.sortType = 1;
-                      globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                      user.lists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                      //globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
                       edited = !edited;
                       break;
                       
                     case 'Date Created (Descending)':
                       globals.sortType = 1;
-                      globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
-                      globals.testLists = List.from(globals.testLists.reversed);
+                      user.lists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                      user.lists = List.from(user.lists.reversed);
+                      //globals.testLists.sort((a,b) => a.dateCreated.compareTo(b.dateCreated));
+                      //globals.testLists = List.from(globals.testLists.reversed);
                       edited = !edited;
                       break;
 

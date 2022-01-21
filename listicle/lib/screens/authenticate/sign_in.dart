@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/services/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import '../../shared/loading.dart';
+import 'package:listicle/shared/loading.dart';
 
 // ref lab 7, exercise 6
 

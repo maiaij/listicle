@@ -1,9 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:listicle/globals.dart' as globals;
 import 'dart:math' as math;
+
+import 'package:listicle/shared/loading.dart';
+import 'package:listicle/services/auth.dart';
+import 'package:listicle/services/db_service.dart';
 
 // all drawer navigation currently pops and pushes named
 // add date modified and progress
@@ -15,14 +21,36 @@ class SelectedList extends StatefulWidget {
   _SelectedListState createState() => _SelectedListState();
 }
 
+final AuthService _auth = AuthService();
+final DBService dbService = DBService();
+
 class _SelectedListState extends State<SelectedList> with SingleTickerProviderStateMixin{
+  
+
+  CustomUser user = CustomUser(uid: '', lists: []);
+  var currentUser = FirebaseAuth.instance.currentUser;
+  
   late TabController controller;
   List<List<ListItem>> tabs = [];
+
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+    if (currentUser != null) {
+      setState(() => loading = true);
+      dynamic result = dbService.getUserData(uid: currentUser!.uid).then((value) {
+        setState(() {
+          user = CustomUser.fromJson(value);
+          user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+          tabs = makeTabLists(user.lists[globals.selectedIndex].items);
+          loading = false;
+        });
+        
+      });
+    }
+    
     controller = TabController(
       length: 5,
       vsync: this
@@ -127,17 +155,17 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
           
           children: <TextSpan>[
             TextSpan(
-              text: globals.testLists[globals.selectedIndex].title,
+              text: user.lists[globals.selectedIndex].title,
               style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
             ),
 
             TextSpan(
-              text: '\n${globals.testLists[globals.selectedIndex].listLen} Items\n\n',
+              text: '\n${user.lists[globals.selectedIndex].listLen} Items\n\n',
               style: const TextStyle(fontSize: 16)
             ),
 
             TextSpan(
-              text: globals.testLists[globals.selectedIndex].description,
+              text: user.lists[globals.selectedIndex].description,
               style: const TextStyle(fontSize: 12)
             ),
           ]
@@ -306,9 +334,9 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     String? selectedFilter = 'Title (Ascending)';
     final _scaffoldKey = GlobalKey<ScaffoldState>();
-    tabs = makeTabLists(globals.testLists[globals.selectedIndex].items);
+    //tabs = makeTabLists(user.lists[globals.selectedIndex].items);
 
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       key: _scaffoldKey,
       endDrawer: makeEndDrawer(),
 
@@ -349,21 +377,21 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                     //filter the page
                     switch(selectedFilter){
                       case 'Title (Ascending)':
-                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+                        user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
                         break;
                       
                       case 'Title (Descending)':
-                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
-                        globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
+                        user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+                        user.lists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
                       case 'Date Modified (Ascending)':
-                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                        user.lists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
                         break;
                         
                       case 'Date Modified (Descending)':
-                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
-                        globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
+                        user.lists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                        user.lists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
                     }

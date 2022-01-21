@@ -20,9 +20,9 @@ class ListItem{
       'title': title,
       'listName': listName,
       'status': status,
-      'progress': progress,
-      'rating': rating,
-      'recommend': recommend,
+      'progress': '$progress',
+      'rating': '$rating',
+      'recommend': (recommend) ? '1':'0',
       'link': link,
       'notes': notes,
       'dateModified': dateModified.toString(),
@@ -31,8 +31,8 @@ class ListItem{
 
   // Maps Json to ListItem
   factory ListItem.fromJson(Map<String, dynamic> json) {
-    ListItem item = ListItem(json['title'], json['listName'], json['status'], json['progress'], json['rating'], 
-                    json['recommend'], json['link'], json['notes']);
+    ListItem item = ListItem(json['title'], json['listName'], json['status'], int.parse(json['progress']), double.parse(json['rating']), 
+                    (json['recommend'] == '1')? true : false, json['link'], json['notes']);
 
     item.dateModified = DateTime.parse(json['dateModified']);
     return item;

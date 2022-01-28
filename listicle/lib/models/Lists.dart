@@ -10,6 +10,8 @@ class Lists{
   String title = "", description = "";
   int listLen = 0;
 
+  Lists.empty();
+
   Lists(this.items, this.title, this.description){
     listLen = items.length;
   }

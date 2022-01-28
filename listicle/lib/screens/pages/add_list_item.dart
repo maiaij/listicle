@@ -28,7 +28,7 @@ class _AddListItemState extends State<AddListItem> {
 
   double _rating = 0;
 
-  bool _recommend = false, loading = false;
+  bool _recommend = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +48,24 @@ class _AddListItemState extends State<AddListItem> {
 
                   if (currentUser != null) {
                     dbService.getUserData(uid: currentUser.uid).then((value) {
-                      user = CustomUser.fromJson(value);
-                      if(recommendString == 'Yes'){
-                        _recommend = true;
-                      }
+                      setState(() {
+                        user = CustomUser.fromJson(value, currentUser.uid);
+                        
+                        if(recommendString == 'Yes'){
+                          _recommend = true;
+                        }
 
-                      ListItem newItem = ListItem(_title.text, user.lists[globals.selectedIndex].title, 
-                                                  _status, int.parse(_progress.text), _rating,
-                                                  _recommend, _link.text, _notes.text);
-                      user.lists[globals.selectedIndex].items.add(newItem);
-                      user.lists[globals.selectedIndex].updateListLen();
+                        ListItem newItem = ListItem(_title.text, user.lists[globals.selectedIndex].title, 
+                                                    _status, int.parse(_progress.text), _rating,
+                                                    _recommend, _link.text, _notes.text);
+                        user.lists[globals.selectedIndex].items.add(newItem);
+                        user.lists[globals.selectedIndex].updateListLen();
 
-                      CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
-                      dbService.addUser(user: temp);
-                    });
                       
+                        CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
+                        dbService.addUser(user: temp);
+                      });
+                    });
                   }
                   
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_title.text} added!")));

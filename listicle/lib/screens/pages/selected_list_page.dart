@@ -42,7 +42,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
       setState(() => loading = true);
       dynamic result = dbService.getUserData(uid: currentUser!.uid).then((value) {
         setState(() {
-          user = CustomUser.fromJson(value);
+          user = CustomUser.fromJson(value, currentUser!.uid);
           user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
           tabs = makeTabLists(user.lists[globals.selectedIndex].items);
           loading = false;

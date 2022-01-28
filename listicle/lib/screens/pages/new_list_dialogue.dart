@@ -33,11 +33,13 @@ class _AddNewListState extends State<AddNewList> {
 
                   if (currentUser != null) {
                     dbService.getUserData(uid: currentUser.uid).then((value) {
-                      user = CustomUser.fromJson(value);
-                      Lists newList = Lists([], _title.text, _description.text);
-                      user.lists.add(newList);
-                      CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
-                      dbService.addUser(user: temp);
+                      setState(() {
+                        user = CustomUser.fromJson(value, currentUser.uid);
+                        Lists newList = Lists([], _title.text, _description.text);
+                        user.lists.add(newList);
+                        CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
+                        dbService.addUser(user: temp);
+                      });
 
                     });
                   }

@@ -11,11 +11,11 @@ class CustomUser{
   CustomUser({required this.uid, required this.lists});
 
   // Maps Json to Lists list
-  factory CustomUser.fromJson(Map<String, dynamic> json) {
+  factory CustomUser.fromJson(Map<String, dynamic> json, String uid) {
     List<Lists> userData = json['lists'].map<Lists>((list) {
       return Lists.fromJson(list);
     }).toList();
-    return CustomUser(uid: json['uid'], lists: userData);
+    return CustomUser(uid: uid, lists: userData);
   }
 
   // Maps Activity to Json
@@ -25,7 +25,7 @@ class CustomUser{
       //Lists thisList = list as Lists;
       convertedLists.add(list.toJson());
     }
-    return {'uid': uid, 'lists': convertedLists};
+    return {'lists': convertedLists};
   }
 
 }

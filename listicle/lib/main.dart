@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:listicle/screens/pages/edit_item_status.dart';
 import 'package:listicle/screens/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -92,6 +93,11 @@ class MyApp extends StatelessWidget {
 
             case '/add_item_link': return MaterialPageRoute(
               builder: (context) => const AddItemLink(),
+              fullscreenDialog: true,
+            );
+
+            case '/edit_item_status': return MaterialPageRoute(
+              builder: (context) => const EditItemStatus(),
               fullscreenDialog: true,
             );
 

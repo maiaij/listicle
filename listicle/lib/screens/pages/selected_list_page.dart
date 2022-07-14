@@ -63,11 +63,8 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                   onPressed: (){
                     if(tabItems[index]['progress'] > 0){
                       setState(() {
-                        
                         // decrement progress
-                        //tabItems[index]['progress'] --;
-                        //tabItems[index].updateDate();
-                        //globals.testLists[globals.selectedIndex].updateDate();
+                        dbService.updateProgress(tabItems[index]['progress'] - 1, globals.listRef, tabItems[index].id);
                       });
                     }
                   }
@@ -82,9 +79,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                   onPressed: (){
                     setState(() {
                       // increment progress
-                      //tabItems[index].progress ++;
-                      //tabItems[index].updateDate();
-                      //globals.testLists[globals.selectedIndex].updateDate();
+                      dbService.updateProgress(tabItems[index]['progress'] + 1, globals.listRef, tabItems[index].id);
                     });
                   }
                 ),
@@ -144,7 +139,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
       final docData = snapshot.data.docs;
       for(int i = 0; i < snapshot.data.docs.length; i++){
         globals.itemTitles.add(docData[i]['title']);
-        globals.itemRefs.add(docData[i].id);
+        globals.itemRefs[docData[i]['title']] = docData[i].id;
         if(docData[i]['status'] == "Ongoing"){
           tabs[0].add(docData[i]);
         }
@@ -308,6 +303,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                 }, 
               ),
               
+              // sort items
               /*PopupMenuButton(
                 icon: const Icon(Icons.filter_list),
                 tooltip: 'Sort',
@@ -459,7 +455,8 @@ class ItemSearch extends SearchDelegate<String>{
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
         onTap: (){
-          globals.itemRef = globals.itemRefs[index];
+          //suggestionList[index]
+          globals.itemRef = globals.itemRefs[suggestionList[index]];
           print(globals.itemRef);
           Navigator.pushNamed(context, '/selected_item');
         },

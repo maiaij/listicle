@@ -186,6 +186,10 @@ class DBService{
     _userLists().doc(listRef).collection('listItems').doc(itemRef).update({"link": link});
   }
 
+  void updateStatus(String status, String listRef, String itemRef){
+    _userLists().doc(listRef).collection('listItems').doc(itemRef).update({"status": status});
+  }
+
   void deleteListItem(String listRef, String itemRef){
     final listCollection = _userLists();
     final String uid = FirebaseAuth.instance.currentUser!.uid;

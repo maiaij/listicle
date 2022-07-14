@@ -74,33 +74,35 @@ class _SelectedItemState extends State<SelectedItem> {
 
                       children: <Widget>[
                         // -1 progress
-                        /*IconButton(
+                        IconButton(
                           icon: const Icon(Icons.horizontal_rule_rounded), 
                           iconSize: 20,
                           onPressed: (){
-                            if(globals.activeTabItems[globals.itemIndex].progress > 0){
+                            if(docData['progress'] > 0){
                               setState(() {
-                                globals.activeTabItems[globals.itemIndex].progress --;
-                                globals.activeTabItems[globals.itemIndex].updateDate();
-                                globals.testLists[globals.selectedIndex].updateDate();
+                                dbService.updateProgress(docData['progress'] - 1, globals.listRef, globals.itemRef);
+                                //globals.activeTabItems[globals.itemIndex].progress --;
+                                //globals.activeTabItems[globals.itemIndex].updateDate();
+                                //globals.testLists[globals.selectedIndex].updateDate();
                               });
                             }
                           }
-                        ), */
+                        ), 
                         
-                        //Text('${globals.activeTabItems[globals.itemIndex].progress}'),
+                        //Text('${docData['progress']}'),
 
                         // +1 progress
-                        /*IconButton(
+                        IconButton(
                           icon: const Icon(Icons.add_rounded), 
                           onPressed: (){
                             setState(() {
-                              globals.activeTabItems[globals.itemIndex].progress ++;
-                              globals.activeTabItems[globals.itemIndex].updateDate();
-                              globals.testLists[globals.selectedIndex].updateDate();
+                              dbService.updateProgress(docData['progress'] + 1, globals.listRef, globals.itemRef);
+                              //globals.activeTabItems[globals.itemIndex].progress ++;
+                              //globals.activeTabItems[globals.itemIndex].updateDate();
+                              //globals.testLists[globals.selectedIndex].updateDate();
                             });
                           }
-                        ), */
+                        ), 
 
                       ],
                     ),
@@ -120,7 +122,6 @@ class _SelectedItemState extends State<SelectedItem> {
                     },
                   ),
 
-                  ///**
                   ListTile(
                     title: const Text('Edit Notes', style: TextStyle(fontSize: 12)),
                     onTap: () {
@@ -128,7 +129,14 @@ class _SelectedItemState extends State<SelectedItem> {
                       Navigator.pushNamed(context, '/edit_item_notes');
                     },
                   ),
-                  // */
+
+                  // edit status
+                  ListTile(
+                    title: const Text('Edit Status', style: TextStyle(fontSize: 12)),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/edit_item_status');
+                    },
+                  ),
                   
                   ListTile(
                     title: const Text('Edit Progress', style: TextStyle(fontSize: 12)),

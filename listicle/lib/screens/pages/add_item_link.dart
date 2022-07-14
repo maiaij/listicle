@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/screens/services/db_service.dart';
 
 class AddItemLink extends StatefulWidget {
   const AddItemLink({ Key? key }) : super(key: key);
@@ -11,6 +12,7 @@ class AddItemLink extends StatefulWidget {
 class _AddItemLinkState extends State<AddItemLink> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _link = TextEditingController();
+  DBService dbService = DBService();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,8 @@ class _AddItemLinkState extends State<AddItemLink> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  globals.activeTabItems[globals.itemIndex].link = _link.text;
+                  //globals.activeTabItems[globals.itemIndex].link = _link.text;
+                  dbService.updateLink(_link.text, globals.listRef, globals.itemRef);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Link Added!")));
                 });
 

@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/globals.dart' as globals;
-import 'package:listicle/services/db_service.dart';
+import 'package:listicle/screens/services/db_service.dart';
 
 class AddNewList extends StatefulWidget {
   const AddNewList({ Key? key }) : super(key: key);
@@ -13,6 +11,7 @@ class AddNewList extends StatefulWidget {
 }
 
 class _AddNewListState extends State<AddNewList> {
+  final DBService dbService = DBService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _title = TextEditingController(), _description = TextEditingController();
 
@@ -27,26 +26,13 @@ class _AddNewListState extends State<AddNewList> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  final DBService dbService = DBService();
-                  CustomUser user = CustomUser(uid: '', lists: []);
-                  var currentUser = FirebaseAuth.instance.currentUser;
-
-                  if (currentUser != null) {
-                    dbService.getUserData(uid: currentUser.uid).then((value) {
-                      setState(() {
-                        user = CustomUser.fromJson(value, currentUser.uid);
-                        Lists newList = Lists([], _title.text, _description.text);
-                        user.lists.add(newList);
-                        CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
-                        dbService.addUser(user: temp);
-                      });
-
-                    });
-                  }
-                  
+                  dbService.addNewList(_title.text, _description.text);
+                  //Lists newList = Lists([], _title.text, _description.text);
+                  //globals.testLists.add(newList);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_title.text} added!")));
                 });
                 Navigator.pop(context);
+                Navigator.popAndPushNamed(context, "/home");
               }
             }
           ),

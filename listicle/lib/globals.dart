@@ -13,3 +13,9 @@ List<Lists> testLists = [];
 
 int itemIndex = 0;
 List<ListItem> activeTabItems = [];
+
+String listRef = '';
+String itemRef = '';
+
+List<String> itemTitles = [];
+List<String> itemRefs = [];

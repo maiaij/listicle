@@ -1,12 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:listicle/screens/pages/selected_list_page.dart';
 import 'package:listicle/globals.dart' as globals;
-import 'package:listicle/services/db_service.dart';
+import 'package:listicle/screens/services/db_service.dart';
 
 class AddListItem extends StatefulWidget {
   const AddListItem({ Key? key }) : super(key: key);
@@ -16,12 +14,12 @@ class AddListItem extends StatefulWidget {
 }
 
 class _AddListItemState extends State<AddListItem> {
-  
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _title = TextEditingController();
   final TextEditingController _progress = TextEditingController();
   final TextEditingController _link = TextEditingController();
   final TextEditingController _notes = TextEditingController();
+  DBService dbService = DBService();
 
   String? selectedStatus, recommendValue;
   String _status = '', recommendString = '';
@@ -42,37 +40,16 @@ class _AddListItemState extends State<AddListItem> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  final DBService dbService = DBService();
-                  CustomUser user = CustomUser(uid: '', lists: []);
-                  var currentUser = FirebaseAuth.instance.currentUser;
-
-                  if (currentUser != null) {
-                    dbService.getUserData(uid: currentUser.uid).then((value) {
-                      setState(() {
-                        user = CustomUser.fromJson(value, currentUser.uid);
-                        
-                        if(recommendString == 'Yes'){
-                          _recommend = true;
-                        }
-
-                        ListItem newItem = ListItem(_title.text, user.lists[globals.selectedIndex].title, 
-                                                    _status, int.parse(_progress.text), _rating,
-                                                    _recommend, _link.text, _notes.text);
-                        user.lists[globals.selectedIndex].items.add(newItem);
-                        user.lists[globals.selectedIndex].updateListLen();
-
-                      
-                        CustomUser temp = CustomUser(uid: currentUser.uid, lists: user.lists);
-                        dbService.addUser(user: temp);
-                      });
-                    });
+                  if(recommendString == 'Yes'){
+                    _recommend = true;
                   }
+                  dbService.addNewListItem(globals.listRef, globals.itemRef, _title.text,  _status, int.parse(_progress.text), _rating, _recommend, _link.text, _notes.text);
                   
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${_title.text} added!")));
                 });
                 
                 Navigator.pop(context);
-                //Navigator.pop(context);
+                Navigator.pop(context);
                 //Navigator.pop(context);
                 Navigator.popAndPushNamed(context, '/selected_list');
               }

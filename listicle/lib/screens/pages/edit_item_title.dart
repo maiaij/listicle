@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/screens/services/db_service.dart';
 
 class EditItemTitle extends StatefulWidget {
   const EditItemTitle({ Key? key }) : super(key: key);
@@ -11,10 +12,11 @@ class EditItemTitle extends StatefulWidget {
 class _EditItemTitleState extends State<EditItemTitle> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _title = TextEditingController();
+  DBService dbService = DBService();
 
   @override
   Widget build(BuildContext context) {
-    _title.text = globals.activeTabItems[globals.itemIndex].title;
+    _title.text = "";
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Item Title'),
@@ -24,7 +26,8 @@ class _EditItemTitleState extends State<EditItemTitle> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  globals.activeTabItems[globals.itemIndex].title = _title.text;
+                  //globals.activeTabItems[globals.itemIndex].title = _title.text;
+                  dbService.updateItemTitle(_title.text, globals.listRef, globals.itemRef);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Title updated!")));
                 });
 

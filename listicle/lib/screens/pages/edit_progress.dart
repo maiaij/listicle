@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/screens/services/db_service.dart';
 
 class EditProgress extends StatefulWidget {
   const EditProgress({ Key? key }) : super(key: key);
@@ -11,10 +12,11 @@ class EditProgress extends StatefulWidget {
 class _EditProgressState extends State<EditProgress> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _progress = TextEditingController();
+  DBService dbService = DBService();
 
   @override
   Widget build(BuildContext context) {
-    _progress.text = "${globals.activeTabItems[globals.itemIndex].progress}";
+    _progress.text = "";
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Item Progress'),
@@ -24,9 +26,10 @@ class _EditProgressState extends State<EditProgress> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  globals.activeTabItems[globals.itemIndex].progress = int.parse(_progress.text);
-                  globals.activeTabItems[globals.itemIndex].updateDate();
-                  globals.testLists[globals.selectedIndex].updateDate();
+                  //globals.activeTabItems[globals.itemIndex].progress = int.parse(_progress.text);
+                  //globals.activeTabItems[globals.itemIndex].updateDate();
+                  //globals.testLists[globals.selectedIndex].updateDate();
+                  dbService.updateProgress(int.parse(_progress.text), globals.listRef, globals.itemRef);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Progress updated!")));
                 });
 

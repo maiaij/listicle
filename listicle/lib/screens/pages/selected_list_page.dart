@@ -1,63 +1,39 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:listicle/globals.dart' as globals;
 import 'dart:math' as math;
 
-import 'package:listicle/shared/loading.dart';
-import 'package:listicle/services/auth.dart';
-import 'package:listicle/services/db_service.dart';
+import 'package:listicle/screens/services/db_service.dart';
 
 // all drawer navigation currently pops and pushes named
 // add date modified and progress
 
 class SelectedList extends StatefulWidget {
   const SelectedList({ Key? key}) : super(key: key);
+  
 
   @override
   _SelectedListState createState() => _SelectedListState();
 }
 
-final AuthService _auth = AuthService();
-final DBService dbService = DBService();
-
 class _SelectedListState extends State<SelectedList> with SingleTickerProviderStateMixin{
-  
-
-  CustomUser user = CustomUser(uid: '', lists: []);
-  var currentUser = FirebaseAuth.instance.currentUser;
-  
+  final DBService dbService = DBService();
+  List<String> itemRefs = [];
   late TabController controller;
-  List<List<ListItem>> tabs = [];
-
-  bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    if (currentUser != null) {
-      setState(() => loading = true);
-      dynamic result = dbService.getUserData(uid: currentUser!.uid).then((value) {
-        setState(() {
-          user = CustomUser.fromJson(value, currentUser!.uid);
-          user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
-          tabs = makeTabLists(user.lists[globals.selectedIndex].items);
-          loading = false;
-        });
-        
-      });
-    }
-    
     controller = TabController(
       length: 5,
       vsync: this
     );
   }
 
-  Widget itemsListView(List<ListItem> tabItems){
+  Widget itemsListView(List<dynamic> tabItems){
     return ListView.separated(
       separatorBuilder: (BuildContext context, int index) => const Divider(), 
       itemCount: tabItems.length,
@@ -66,12 +42,14 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
           padding: const EdgeInsets.all(10.0),
           child: ListTile(
             title: Text(
-              tabItems[index].title,
+              tabItems[index]['title'],
               style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
 
             subtitle: Text(
-              "Updated: ${DateFormat.yMMMd().format(tabItems[index].dateModified)}",
+              (tabItems[index]['dateModified'] == null)?
+              ("Updated: ${DateFormat.yMMMd().format(DateTime.parse(DateTime.now().toString()))}"):
+              ("Updated: ${DateFormat.yMMMd().format(DateTime.parse(tabItems[index]['dateModified'].toDate().toString()))}"),
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
 
@@ -83,27 +61,30 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                   icon: const Icon(Icons.horizontal_rule_rounded), 
                   iconSize: 20,
                   onPressed: (){
-                    if(tabItems[index].progress > 0){
+                    if(tabItems[index]['progress'] > 0){
                       setState(() {
-                        tabItems[index].progress --;
-                        tabItems[index].updateDate();
-                        globals.testLists[globals.selectedIndex].updateDate();
+                        
+                        // decrement progress
+                        //tabItems[index]['progress'] --;
+                        //tabItems[index].updateDate();
+                        //globals.testLists[globals.selectedIndex].updateDate();
                       });
                     }
                   }
                 ),
                 
                 Text(
-                  '${tabItems[index].progress}'
+                  '${tabItems[index]['progress']}'
                 ),
 
                 IconButton(
                   icon: const Icon(Icons.add_rounded), 
                   onPressed: (){
                     setState(() {
-                      tabItems[index].progress ++;
-                      tabItems[index].updateDate();
-                      globals.testLists[globals.selectedIndex].updateDate();
+                      // increment progress
+                      //tabItems[index].progress ++;
+                      //tabItems[index].updateDate();
+                      //globals.testLists[globals.selectedIndex].updateDate();
                     });
                   }
                 ),
@@ -124,17 +105,84 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
             */
 
             onTap: (){
-              globals.origin = 0;
-              globals.itemIndex = index;
-              globals.activeTabItems = tabItems;
+              // use something in the below line to edit progress
+              globals.itemRef = tabItems[index].id;
+              print(globals.itemRef);
               Navigator.pushNamed(context, '/selected_item');
+              globals.origin = 0;
+              //globals.itemIndex = index;
+              //globals.activeTabItems = tabItems;
+              //Navigator.pushNamed(context, '/selected_item');
             },
           ),
         );
       }, 
     );
   }
-  
+
+  Widget makeItemView(BuildContext context, TabController controller){
+    List<dynamic> stat1 = [], stat2 = [], stat3 = [], stat4 = [], stat5 = [];
+    List<dynamic> tabs = [stat1, stat2, stat3, stat4, stat5];
+
+    return StreamBuilder(
+      stream: dbService.getItemListSnapshot(globals.listRef),
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        //add loading gif?
+      if(snapshot.data == null){
+        return SliverFillRemaining(
+          child: Container(
+            color: Colors.white,
+            height: MediaQuery.of(context).size.height,
+            child: const Text(" ")
+          )
+        );
+      }   
+      
+      globals.itemTitles.clear();
+      globals.itemRefs.clear();
+
+      final docData = snapshot.data.docs;
+      for(int i = 0; i < snapshot.data.docs.length; i++){
+        globals.itemTitles.add(docData[i]['title']);
+        globals.itemRefs.add(docData[i].id);
+        if(docData[i]['status'] == "Ongoing"){
+          tabs[0].add(docData[i]);
+        }
+        else if(docData[i]['status'] == "Not Started"){
+          tabs[1].add(docData[i]);
+        }
+        else if(docData[i]['status'] == "BackBurner"){
+          tabs[2].add(docData[i]);
+        }
+        else if(docData[i]['status'] == "Completed"){
+          tabs[3].add(docData[i]);
+        }
+        else if(docData[i]['status'] == "Dropped"){
+          tabs[4].add(docData[i]);
+        }
+      }
+
+      return SliverFillRemaining(
+        child: Container(
+          color: Colors.white,
+          height: MediaQuery.of(context).size.height,
+          child: TabBarView(
+            controller: controller,
+            children: [
+              //${globals.testLists[globals.selectedIndex].title}
+              (tabs[0].isNotEmpty)? (itemsListView(tabs[0])) : (const Center(child: Text("No ongoing items"))),
+              (tabs[1].isNotEmpty)? (itemsListView(tabs[1])) : (const Center(child: Text("No unstarted items"))),
+              (tabs[2].isNotEmpty)? (itemsListView(tabs[2])) : (const Center(child: Text("No backburner items"))),
+              (tabs[3].isNotEmpty)? (itemsListView(tabs[3])) : (const Center(child: Text("No completed items"))),
+              (tabs[4].isNotEmpty)? (itemsListView(tabs[4])) : (const Center(child: Text("No dropped items"))),
+            ]
+          ),
+        ),
+      );
+    }
+  );
+  }
+
   final Widget _drawerHeader = SizedBox(
     height: 60,
     child: DrawerHeader(
@@ -144,105 +192,6 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
       ),
     )
   );
-
-  Widget makeHeaderTop(){
-    return Container(
-      alignment: AlignmentDirectional.topStart,
-      height: 150,
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
-      child: Text.rich(
-        TextSpan(
-          
-          children: <TextSpan>[
-            TextSpan(
-              text: user.lists[globals.selectedIndex].title,
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-            ),
-
-            TextSpan(
-              text: '\n${user.lists[globals.selectedIndex].listLen} Items\n\n',
-              style: const TextStyle(fontSize: 16)
-            ),
-
-            TextSpan(
-              text: user.lists[globals.selectedIndex].description,
-              style: const TextStyle(fontSize: 12)
-            ),
-          ]
-        ),
-      ),
-    );
-  }
-
-  Widget makeCustomHeader(TabController controller){
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: CustomHeader(
-        top: makeHeaderTop(),
-        bottom: TabBar(
-          controller: controller,
-          isScrollable: true,
-          labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          labelColor: Colors.black,
-          tabs: const <Tab>[
-            Tab(text: 'ONGOING'),
-            Tab(text: 'NOT STARTED'),
-            Tab(text: 'BACKBURNER'),
-            Tab(text: 'COMPLETED'),
-            Tab(text: 'DROPPED'),
-          ]
-        )
-      ),
-    );
-  }
-
-  List<List<ListItem>> makeTabLists(List<ListItem> items){
-    List<ListItem> bitems1 = [], bitems2 = [], bitems3 = [], bitems4 = [], bitems5 = [];
-    List<List<ListItem>> result = [bitems1, bitems2, bitems3, bitems4, bitems5];
-    for(int i = 0; i < items.length; i++){
-      if(items[i].status == "Ongoing"){
-        result[0].add(items[i]);
-      }
-      else if(items[i].status == "Not Started"){
-        result[1].add(items[i]);
-      }
-      else if(items[i].status == "BackBurner"){
-        result[2].add(items[i]);
-      }
-      else if(items[i].status == "Completed"){
-        result[3].add(items[i]);
-      }
-      else if(items[i].status == "Dropped"){
-        result[4].add(items[i]);
-      }
-    }
-    return result;
-  }
-
-  Widget makeItemView(BuildContext context, TabController controller, List<List<ListItem>> tabs){
-    return SliverFillRemaining(
-      child: Container(
-        color: Colors.white,
-        height: MediaQuery.of(context).size.height,
-        child: TabBarView(
-          controller: controller,
-          children: [
-            //${globals.testLists[globals.selectedIndex].title}
-            (tabs[0].isNotEmpty)? (itemsListView(tabs[0])) : (const Center(child: Text("No ongoing items"))),
-            (tabs[1].isNotEmpty)? (itemsListView(tabs[1])) : (const Center(child: Text("No unstarted items"))),
-            (tabs[2].isNotEmpty)? (itemsListView(tabs[2])) : (const Center(child: Text("No backburner items"))),
-            (tabs[3].isNotEmpty)? (itemsListView(tabs[3])) : (const Center(child: Text("No completed items"))),
-            (tabs[4].isNotEmpty)? (itemsListView(tabs[4])) : (const Center(child: Text("No dropped items"))),
-            
-            //itemsListView(tabs[1]), 
-            //itemsListView(tabs[2]),
-            //itemsListView(tabs[3]),
-            //itemsListView(tabs[4]),
-          ]
-        ),
-      ),
-    );
-  }
 
   Widget makeEndDrawer(){
     return SizedBox(
@@ -287,7 +236,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Delete "${globals.testLists[globals.selectedIndex].title}"?'),
+                        title: Text('Are you sure you want to delete?'),
                         content: const Text('This action cannot be undone'),
                         actions: <Widget>[
                           Row(
@@ -309,7 +258,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                                 backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 202, 97, 95)),
                               ),
                               onPressed: () {
-                                globals.testLists.removeAt(globals.selectedIndex);
+                                dbService.deleteList(globals.listRef);
                                 Navigator.of(context).pop();
                                 Navigator.pop(context);
                                 Navigator.pop(context);
@@ -332,14 +281,12 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    String? selectedFilter = 'Title (Ascending)';
     final _scaffoldKey = GlobalKey<ScaffoldState>();
-    //tabs = makeTabLists(user.lists[globals.selectedIndex].items);
 
-    return loading ? Loading() : Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       endDrawer: makeEndDrawer(),
-
+      
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -360,8 +307,8 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                   showSearch(context: context, delegate: ItemSearch());
                 }, 
               ),
-
-              PopupMenuButton(
+              
+              /*PopupMenuButton(
                 icon: const Icon(Icons.filter_list),
                 tooltip: 'Sort',
                 itemBuilder: (BuildContext context) => [
@@ -377,28 +324,28 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
                     //filter the page
                     switch(selectedFilter){
                       case 'Title (Ascending)':
-                        user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
                         break;
                       
                       case 'Title (Descending)':
-                        user.lists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
-                        user.lists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.title.compareTo(b.title));
+                        globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
                       case 'Date Modified (Ascending)':
-                        user.lists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
                         break;
                         
                       case 'Date Modified (Descending)':
-                        user.lists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
-                        user.lists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
+                        globals.testLists[globals.selectedIndex].items.sort((a,b) => a.dateModified.compareTo(b.dateModified));
+                        globals.testLists[globals.selectedIndex].items = List.from(globals.testLists[globals.selectedIndex].items.reversed);
                         break;
 
                     }
                   });
                 },
               ),
-
+              */
               IconButton(
                 icon: const Icon(Icons.menu),
                 tooltip: 'Edit Options',
@@ -410,7 +357,7 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
           SliverPersistentHeader(
             pinned: true,
             delegate: CustomHeader(
-              top: makeHeaderTop(),
+              top: dbService.makeHeaderTop(globals.listRef),
               bottom: TabBar(
                 controller: controller,
                 isScrollable: true,
@@ -427,11 +374,12 @@ class _SelectedListState extends State<SelectedList> with SingleTickerProviderSt
             ),
           ),
 
-          makeItemView(context, controller, tabs),
+          makeItemView(context, controller),
         ],
       ),
     );
   }
+  
 }
 
 class CustomHeader extends SliverPersistentHeaderDelegate {
@@ -439,7 +387,6 @@ class CustomHeader extends SliverPersistentHeaderDelegate {
   final Widget top;
 
   CustomHeader({required this.bottom, required this.top});
-
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -468,7 +415,7 @@ class CustomHeader extends SliverPersistentHeaderDelegate {
 
 class ItemSearch extends SearchDelegate<String>{
 
-  final titles = globals.testLists[globals.selectedIndex].items.map((e) => e.title).toList();
+  final titles = globals.itemTitles;
   final recentTitles = [];
   //List<String> recentTitles = ['book one'];
 
@@ -512,10 +459,9 @@ class ItemSearch extends SearchDelegate<String>{
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
         onTap: (){
-          globals.origin = 2;
-            globals.itemIndex = index;
-            globals.activeTabItems = globals.testLists[globals.selectedIndex].items;
-            Navigator.pushNamed(context, '/selected_item');
+          globals.itemRef = globals.itemRefs[index];
+          print(globals.itemRef);
+          Navigator.pushNamed(context, '/selected_item');
         },
         
         title: RichText(

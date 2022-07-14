@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:listicle/models/CustomUser.dart';
 import 'package:listicle/models/Lists.dart';
+import 'package:listicle/screens/services/db_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DBService dbService = DBService();
 
   // create user object based on firebase user
   CustomUser? _userFromFirbaseUser(User? user){
@@ -23,6 +25,7 @@ class AuthService {
     try{
       UserCredential result = await _auth.signInAnonymously();
       User? user = result.user;
+      dbService.addUserToDatabase(user!.uid);
       return _userFromFirbaseUser(user);
     } catch(e){
       print(e.toString());
@@ -47,6 +50,7 @@ class AuthService {
     try{
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+      dbService.addUserToDatabase(user!.uid);
       return _userFromFirbaseUser(user);
     } catch(e){
       print(e.toString());

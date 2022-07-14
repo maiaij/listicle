@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/screens/services/db_service.dart';
 
 //might not need this
 
 class EditNotes extends StatefulWidget {
   const EditNotes({ Key? key }) : super(key: key);
-
+  
   @override
   _EditNotesState createState() => _EditNotesState();
 }
@@ -13,10 +14,12 @@ class EditNotes extends StatefulWidget {
 class _EditNotesState extends State<EditNotes> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _notes = TextEditingController();
-
+  DBService dbService = DBService();
+  
   @override
   Widget build(BuildContext context) {
-    _notes.text = globals.activeTabItems[globals.itemIndex].notes;
+    // set to the sent value
+    _notes.text = "";
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Item Notes'),
@@ -26,7 +29,8 @@ class _EditNotesState extends State<EditNotes> {
             onPressed: (){
               if(_formKey.currentState!.validate()){
                 setState(() {
-                  globals.activeTabItems[globals.itemIndex].notes = _notes.text;
+                  //globals.activeTabItems[globals.itemIndex].notes = _notes.text;
+                  dbService.updateNotes(_notes.text, globals.listRef, globals.itemRef);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Notes updated!")));
                 });
 

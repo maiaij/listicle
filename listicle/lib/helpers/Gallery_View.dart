@@ -1,14 +1,9 @@
 // ignore_for_file: file_names, camel_case_types
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:listicle/globals.dart' as globals;
-import 'package:listicle/models/CustomUser.dart';
-import 'package:listicle/models/Lists.dart';
-import 'package:listicle/services/db_service.dart';
-import 'package:provider/provider.dart';
+import 'package:listicle/screens/services/db_service.dart';
 
 class Gallery_View extends StatefulWidget {
   const Gallery_View({ Key? key }) : super(key: key);
@@ -19,15 +14,13 @@ class Gallery_View extends StatefulWidget {
 
 class _Gallery_ViewState extends State<Gallery_View> {
   final DBService dbService = DBService();
-  
-  CustomUser user = CustomUser(uid: '', lists: []);
-  var currentUser = FirebaseAuth.instance.currentUser;
-  bool loading = false;
+  List<String> listRefs = [];
 
-  List<Container> makeItemContainers(BuildContext context, dynamic lists){
+  List<Container> makeItemContainers(BuildContext context, dynamic docData, int len){
     List<Container> result = [];
 
-    for(int i = 0; i < lists.length; i++){
+    for(int i = 0; i < len; i++){
+      listRefs.add(docData[i].id);
       result.add(
         Container(
           child: Column(
@@ -47,14 +40,15 @@ class _Gallery_ViewState extends State<Gallery_View> {
                     )
                   ),
                   onTap: () async{
-                    globals.selectedIndex = i;
-                    await Navigator.pushNamed(context, '/selected_list');
+                    //globals.selectedIndex = i;
+                    
 
-                    //setState(() {
-                    //  if(globals.selectedIndex == globals.testLists.length){
-                    //    globals.selectedIndex --;
-                    //  }
-                    //});
+                    setState(() {
+                      globals.listRef = listRefs[i];
+                      print(listRefs[i]);
+                    });
+
+                    await Navigator.pushNamed(context, '/selected_list');
                     
                   },
                 )
@@ -63,7 +57,7 @@ class _Gallery_ViewState extends State<Gallery_View> {
               Flexible(
                 flex: 0,
                 child: Text(
-                  lists[i].title,
+                  docData[i]['title'],
                   style: const TextStyle(fontSize: 16, color: Colors.black),
                 ),
               ),
@@ -74,14 +68,14 @@ class _Gallery_ViewState extends State<Gallery_View> {
                   TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text: "${lists[i].listLen} Items\n",
+                        text: "${docData[i]['listLen']} Items\n",
                         style: const TextStyle(fontSize: 12, color: Colors.black),
                       ),
 
                       TextSpan(
                         text: (globals.sortType == 0)? 
-                              ("Updated: ${DateFormat.yMMMd().format(lists[i].dateModified)}"):
-                              ("Created: ${DateFormat.yMMMd().format(lists[i].dateCreated)}"),
+                              ("Updated: ${DateFormat.yMMMd().format(DateTime.parse(docData[i]['dateModified'].toDate().toString()))}"):
+                              ("Created: ${DateFormat.yMMMd().format(DateTime.parse(docData[i]['dateCreated'].toDate().toString()))}"),
                         style: const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ]
@@ -101,15 +95,20 @@ class _Gallery_ViewState extends State<Gallery_View> {
 
   @override
   Widget build(BuildContext context) {
-    final lists = Provider.of<List<Lists>>(context);
-
-    return GridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 15,
-      mainAxisSpacing: 15,
-      padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
-      children: makeItemContainers(context, lists),
-    );
+    return StreamBuilder(
+      stream: dbService.getListsSnapshot(),
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        if(snapshot.data == null) return const Text(" ");//return const Text("\n   Add a New List");
+        return GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 15,
+          mainAxisSpacing: 15,
+          padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+          children: makeItemContainers(context, snapshot.data.docs, snapshot.data.docs.length),
+        );
+      }
+    ); 
+    
   }
 }
 

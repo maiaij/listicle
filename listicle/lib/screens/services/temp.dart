@@ -4,6 +4,7 @@ import 'package:listicle/models/Lists.dart';
 import 'package:listicle/models/ListItem.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:listicle/globals.dart' as globals;
+import 'package:listicle/screens/services/db_service.dart';
 import 'dart:math' as math;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,7 +38,7 @@ class _SelectedItemState extends State<SelectedItem> {
 
     return result;
   }
-
+/*
   Widget makeEndDrawer(){
     return SizedBox(
       width: 200,
@@ -325,6 +326,7 @@ class _SelectedItemState extends State<SelectedItem> {
       ),
     );
   }
+*/
 
   void _launchURL(String url) async {
   if (!await launch(url)) throw 'Could not launch $url';
@@ -332,26 +334,26 @@ class _SelectedItemState extends State<SelectedItem> {
 
   @override
   Widget build(BuildContext context) {
+    final DBService dbService = DBService();
     final _scaffoldKey = GlobalKey<ScaffoldState>();
-    String? selectedStatus = globals.activeTabItems[globals.itemIndex].status;
+    //String? selectedStatus = globals.activeTabItems[globals.itemIndex].status;
     TextEditingController _notesController = TextEditingController();
-    _notesController.text = globals.activeTabItems[globals.itemIndex].notes;
+    _notesController.text = " ";
 
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      endDrawer: makeEndDrawer(), 
+      //endDrawer: makeEndDrawer(), 
 
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: true,
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black), 
+        
         leading: BackButton(
           color: Colors.black,
           onPressed: (){
-            int changed = globals.testLists[globals.selectedIndex].items.indexOf(globals.activeTabItems[globals.itemIndex]);
-            globals.testLists[globals.selectedIndex].items[changed] = globals.activeTabItems[globals.itemIndex];
             
             if(globals.origin == 0){
               Navigator.pop(context);
@@ -371,9 +373,11 @@ class _SelectedItemState extends State<SelectedItem> {
             
           },
         ),
+        
+        
         actions: [
           // recommend button
-          (globals.activeTabItems[globals.itemIndex].recommend == true)?
+          ( globals.activeTabItems[globals.itemIndex].recommend == true)?
           (
             IconButton(
               icon: Icon(Icons.favorite, color: Colors.indigo[100]),
@@ -488,229 +492,16 @@ class _SelectedItemState extends State<SelectedItem> {
             }, 
           ),
 
-          IconButton(
+          /*IconButton(
             icon: const Icon(Icons.menu),
             onPressed: (){_scaffoldKey.currentState!.openEndDrawer();},
-          ),
+          ),*/
         ],
+        
       ),
 
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // HEADER
-            Container(
-              color: Colors.white,
-              alignment: AlignmentDirectional.topStart,
-              //height: 150,
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: globals.activeTabItems[globals.itemIndex].title,
-                          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-                        ),
-                        TextSpan(
-                          text: "\n${globals.activeTabItems[globals.itemIndex].listName}\n",
-                          style: const TextStyle(fontSize: 24)
-                        ),
-
-                        TextSpan(
-                          text: "Progress: ${globals.activeTabItems[globals.itemIndex].progress}",
-                          style: const TextStyle(fontSize: 14)
-                        ),
-                      ]
-                    )
-                  ),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.star_rounded, size: 20),
-                      Text(
-                        " ${globals.activeTabItems[globals.itemIndex].rating}",
-                        style: const TextStyle(fontSize: 14)
-                      )
-                    ],
-                  ),
-
-                  Text(
-                    "Updated: ${DateFormat.yMMMd().format(globals.activeTabItems[globals.itemIndex].dateModified)}",
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  )
-                
-                ]
-              )
-            ), 
-
-            // BUTTON ROW
-            ButtonBar(
-              alignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // status dropdown
-                Container(
-                  //height: 40,
-                  decoration: BoxDecoration(color: Colors.indigo[50], borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton(
-                      style: const TextStyle(fontSize: 14, color: Colors.black),
-                      value: selectedStatus,
-                      items: const[
-                        DropdownMenuItem(child: Text("Ongoing"),value: "Ongoing"),
-                        DropdownMenuItem(child: Text("Not Started"),value: "Not Started"),
-                        DropdownMenuItem(child: Text("BackBurner"),value: "BackBurner"),
-                        DropdownMenuItem(child: Text("Completed"),value: "Completed"),
-                        DropdownMenuItem(child: Text("Dropped"),value: "Dropped"),
-                      ], 
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedStatus = newValue!;
-                          globals.activeTabItems[globals.itemIndex].status = selectedStatus!;
-                        });
-                      }
-                    ),
-                  ),  
-                ),
-                
-                // link button
-                TextButton(
-                  child: Container(
-                    height: 47,
-                    width: 200,
-                    decoration: BoxDecoration(color: Colors.indigo[50],borderRadius: BorderRadius.circular(10),),
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child:  Center(
-                      child: Text(
-                        (globals.activeTabItems[globals.itemIndex].link.isEmpty)?
-                        ('Add Link'):('CONTINUE'), 
-                        style: const TextStyle(color: Colors.black, fontSize: 14)
-                      )
-                    ),
-                  ),
-                  onPressed: (){
-                    // if link open link
-                    if(globals.activeTabItems[globals.itemIndex].link.isEmpty){
-                      Navigator.pushNamed(context, '/add_item_link');
-                    }
-                    else{
-                      _launchURL(globals.activeTabItems[globals.itemIndex].link);
-                    }
-                  }
-                ),
-              ],
-            ),
-
-            //const Padding(padding: EdgeInsets.only(left: 10)),
-
-            // NOTE SECTION
-            Container(
-              color: Colors.white,
-              alignment: AlignmentDirectional.topStart,
-              //height: 150,
-              padding: const EdgeInsets.only(left: 10, right: 20, top: 10, bottom: 10),//const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Notes:',
-                    style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
-                  ), 
-
-                  /** change to editable text
-                  EditableText(
-                    keyboardType: TextInputType.visiblePassword,
-                    onEditingComplete: (){
-                      if(globals.activeTabItems[globals.itemIndex].notes == _notesController.text){
-                        setState(() {
-                          globals.activeTabItems[globals.itemIndex].notes = _notesController.text;
-                        });
-                      }
-
-                      else{
-                        // add an alert
-                        showDialog<void>(
-                          barrierDismissible: true, // false if user must tap button!
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Update Notes?'),
-                              content: const Text('This action cannot be undone'),
-                              actions: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ElevatedButton(
-                                    style: ButtonStyle(
-                                      backgroundColor: MaterialStateProperty.all(Colors.grey[200]),
-                                    ),
-                                    child: const Text('Cancel', style: TextStyle(color: Colors.black)),
-                                    onPressed: () {
-                                      setState(() {
-                                        Navigator.of(context).pop();
-                                      });
-                                    },
-                                  ),
-
-                                  ElevatedButton(
-                                    child: const Text('Save'),
-                                    style: ButtonStyle(
-                                      backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 148, 159, 226)),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      if(_notesController.text.isEmpty){
-                                        setState(() {
-                                          globals.activeTabItems[globals.itemIndex].notes = 'No Notes Yet';
-                                        });
-                                      }
-                                      else{
-                                        setState(() {
-                                          globals.activeTabItems[globals.itemIndex].notes = _notesController.text;
-                                        });
-                                      }
-                                      
-                                    },
-                                  ),
-                                  ],
-                                ),
-                                  
-                              ],
-                            );
-                          },
-                        );
-                      }
-                        
-                      //FocusScope.of(context).nextFocus();
-                    },
-                    maxLines: 20,
-                    controller: _notesController, 
-                    focusNode: FocusNode(), 
-                    style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.black), 
-                    cursorColor: Colors.indigo, 
-                    backgroundCursorColor: const Color.fromARGB(255, 197, 202, 233),
-                    
-                  ),
-                  */
-                  Text(
-                    globals.activeTabItems[globals.itemIndex].notes,
-                    style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                  ), 
-                ],
-              )
-            )
-
-                
-          ],
-        ),  
-      ),
+      //body: Text("testing")
+      //body: dbService.displayItemInfo(context, globals.listRef, globals.itemRef),
         
     );
   }

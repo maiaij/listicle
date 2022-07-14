@@ -1,15 +1,10 @@
 // ignore_for_file: file_names, camel_case_types
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:listicle/globals.dart' as globals;
-import 'package:listicle/helpers/List_Tile.dart';
-import 'package:listicle/models/CustomUser.dart';
-import 'package:listicle/models/Lists.dart';
-import 'package:listicle/services/db_service.dart';
-import 'package:provider/provider.dart';
+import 'package:listicle/screens/services/db_service.dart';
 
 // MAKE NOT STATEFUL
 // the update can happen in add list page, no set state needed because the homepage reloads
@@ -24,20 +19,61 @@ class List_View extends StatefulWidget {
 
 class _List_ViewState extends State<List_View> {
   final DBService dbService = DBService();
-
-  bool loading = false;
   
   @override
   Widget build(BuildContext context) {
+    List<String> listRefs = [];
+    return StreamBuilder(
+      stream: dbService.getListsSnapshot(),
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        //add loading gif?
+        if(snapshot.data == null) return const Text(" ");//return const Text("\n   Add a New List");
+        return ListView.separated(
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
+          itemCount: snapshot.data.docs.length,
+          itemBuilder: (BuildContext context, int index){
+            final docData = snapshot.data.docs;
+            listRefs.add(docData[index].id);
+            return Container(
+              padding: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
+              child: ListTile(
+                title: Text(
+                  docData[index]['title'],
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                ),
 
-    final lists = Provider.of<List<Lists>>(context);
+                subtitle: Text.rich(
+                  TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "${docData[index]['listLen']} Items\n",
+                        style: const TextStyle(fontSize: 12, color: Colors.black),
+                      ),
 
-    return ListView.separated(
-      separatorBuilder: (BuildContext context, int index) => const Divider(),
-      itemCount: lists.length,
-      itemBuilder: (BuildContext context, int index){
-        return List_Tile(mainList: lists[index], index: index);
-      }, 
+                      TextSpan(
+                        text: (globals.sortType == 0)? 
+                              ("Updated: ${DateFormat.yMMMd().format(DateTime.parse(docData[index]['dateModified'].toDate().toString()))}"):
+                              ("Created: ${DateFormat.yMMMd().format(DateTime.parse(docData[index]['dateCreated'].toDate().toString()))}"),
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ]
+                  )
+                ),
+
+                onTap: () async{
+                  setState(() {
+                    globals.listRef = listRefs[index];
+                    print(listRefs[index]);
+                  });
+                  
+                  await Navigator.pushNamed(context, '/selected_list');
+                  
+                },
+              ),
+            );
+          }
+        );
+      }
     );
   }
 }
